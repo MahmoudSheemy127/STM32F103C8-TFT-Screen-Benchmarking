@@ -1,0 +1,6 @@
+Cortex_M3_Core.c:15:6:NVIC_SetEnableInterrupt	16	static
+Cortex_M3_Core.c:26:6:NVIC_ClearEnableInterrupt	16	static
+Cortex_M3_Core.c:36:6:NVIC_SetPendingInterrupt	16	static
+Cortex_M3_Core.c:46:6:NVIC_ClearPendingInterrupt	16	static
+Cortex_M3_Core.c:57:10:NVIC_IsActiveInterrupt	16	static
+Cortex_M3_Core.c:68:6:NVIC_SetPriority	16	static

@@ -1,0 +1,7 @@
+SYSTICK_M3.c:12:6:SYSTICK_Init	16	static
+SYSTICK_M3.c:30:13:SYSTICK_SetNumOfTicks	16	static
+SYSTICK_M3.c:43:6:SYSTICK_DeInit	4	static
+SYSTICK_M3.c:54:6:SYSTICK_DisableInterrupt	4	static
+SYSTICK_M3.c:59:6:SYSTICK_Start	16	static
+SYSTICK_M3.c:69:6:SYSTICK_Stop	4	static
+SYSTICK_M3.c:76:6:NVIC_IRQ_SysTick_Handler	8	static
