@@ -11,6 +11,7 @@
 #include "CortexM3/Cortex_M3_Core.h"
 #include "Drivers/GPIO/GPIO.h"
 #include "Drivers/RCC/RCC.h"
+#include "Drivers/DMA/DMA.h"
 #include "CortexM3/SYSTICK_M3.h"
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
@@ -20,48 +21,17 @@
 
 void blinkLed();
 void Clock_Config();
-//THESE ARE FOR THE ASYNCHRONOUS EXCEPTIONS
-// //SET ENABLE REGISTERS
-// #define NVIC_ISER0	*((volatile uint32_t*)(0xE000E100))
-// #define NVIC_ISER1	*((volatile uint32_t*)(0xE000E104))
-// #define NVIC_ISER2	*((volatile uint32_t*)(0xE000E108))
-// #define NVIC_ISER3	*((volatile uint32_t*)(0xE000E10C))
-// #define NVIC_ISER4	*((volatile uint32_t*)(0xE000E110))
-// #define NVIC_ISER5	*((volatile uint32_t*)(0xE000E114))
-// #define NVIC_ISER6	*((volatile uint32_t*)(0xE000E118))
-// #define NVIC_ISER7	*((volatile uint32_t*)(0xE000E11C))
 
-// //CLEAR ENABLE REGISTERS
-// #define NVIC_ICER0	*((volatile uint32_t*)0xE000E180)
-// #define NVIC_ICER1	*((volatile uint32_t*)0xE000E184)
-// #define NVIC_ICER2	*((volatile uint32_t*)0xE000E188)
-// #define NVIC_ICER3	*((volatile uint32_t*)0xE000E18C)
-// #define NVIC_ICER4	*((volatile uint32_t*)0xE000E190)
-// #define NVIC_ICER5	*((volatile uint32_t*)0xE000E194)
-// #define NVIC_ICER6	*((volatile uint32_t*)0xE000E198)
-// #define NVIC_ICER7	*((volatile uint32_t*)0xE000E19C)
 
-// //SET PENDING REGISTERS
-// #define NVIC_ISPR0	*((volatile uint32_t*)0xE000E200)
-// #define NVIC_ISPR1	*((volatile uint32_t*)0xE000E204)
-// #define NVIC_ISPR2	*((volatile uint32_t*)0xE000E208)
-// #define NVIC_ISPR3	*((volatile uint32_t*)0xE000E20C)
-// #define NVIC_ISPR4	*((volatile uint32_t*)0xE000E210)
-// #define NVIC_ISPR5	*((volatile uint32_t*)0xE000E214)
-// #define NVIC_ISPR6	*((volatile uint32_t*)0xE000E218)
-// #define NVIC_ISPR7	*((volatile uint32_t*)0xE000E21C)
 
-//define and init gpio led
-//config pin as output
 
-//enable rcc
+/* Define Global arrays */
+uint8_t sendArray[2] = {2, 3};
+uint8_t receiveArray[2];
 
 int main(void)
 {
-	//NVIC->ISER[2] |= (1<<24);
-	//select hse clock
-//	RCC->RCC_CR |= (1<<16);
-	//set rcc for GPIO A
+
 	RCC->RCC_APB2ENR |= (1 << 2);
 //	Clock_Config();
 	GPIOA->CRL |= (1 << 0);
@@ -71,16 +41,14 @@ int main(void)
 //	SYSTICK_Start(10UL,blinkLed);
 	//set as output
 	GPIOA->ODR |= (1 << 0);
-
-	//enable interrupt (TIM7)
-	// NVIC_SetEnableInterrupt(NVIC_IRQ_WWDG_IRQHandler);
-	// NVIC_SetPendingInterrupt(NVIC_IRQ_WWDG_IRQHandler);
-	// NVIC_ClearEnableInterrupt(NVIC_IRQ_WWDG_IRQHandler);
+	DMA_HandleTypeDef dma;
+	dma.dma_TypeDef = DMA1_1;
+	dma.dma_Direction = DMA_READ_FROM_MEMORY;
+	dma.dma_Mem2Mem = DMA_MEM2MEM_ENABLE;
+	dma.dma_MemIncMode = DMA_MEM_INC_ENABLE;
+	dma.dma_Mode = DMA_NON_CIRCULAR_MODE;
+	DMA_Init(&dma);
 	
-	//	NVIC_ISER1 |= (1 << 24);
-//	set pending for this interrupt
-//	NVIC_ISPR1 |= (1 << 24);
-
     /* Loop forever */
 	for(;;);
 

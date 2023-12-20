@@ -22,6 +22,7 @@ OBJCOPY_BIN :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 Src/CortexM3 \
+Src/Drivers/DMA \
 Src/Drivers/GPIO \
 Src/Drivers/RCC \
 Src \

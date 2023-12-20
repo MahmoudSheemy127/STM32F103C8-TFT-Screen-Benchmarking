@@ -11,6 +11,7 @@
 /************************** INCLUDES *************************/
 //#include "Common/Common"
 #include "Drivers/Common/Common.h"
+#include  "Std_Types.h"
 
 /************************** MACROS *************************/
 
@@ -50,10 +51,7 @@ typedef enum{
 	DMA_READ_FROM_MEMORY
 }DMA_TRANSFER_DIRECTION;
 
-typedef enum{
-	DMA_READ_FROM_PERIPHERAL,
-	DMA_READ_FROM_MEMORY
-}DMA_TRANSFER_DIRECTION;
+
 
 typedef enum{
 	DMA_MEM_SIZE_8_BITS,
