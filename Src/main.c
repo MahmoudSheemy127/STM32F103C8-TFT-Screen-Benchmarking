@@ -19,15 +19,15 @@
 #endif
 
 
+
+/* Helper functions */
 void blinkLed();
 void Clock_Config();
-
-
-
+void DMA_Transfer(DMA_HandleTypeDef *hdma, uint32_t *srcData, uint32_t *destData, uint32_t dataLength);
 
 /* Define Global arrays */
-uint8_t sendArray[2] = {2, 3};
-uint8_t receiveArray[2];
+uint32_t sendArray[2] = {2, 3};
+uint32_t receiveArray[2];
 
 int main(void)
 {
@@ -40,7 +40,7 @@ int main(void)
 	// NVIC_SetEnableInterrupt(NVIC_IRQ_SysTick_Handler);
 //	SYSTICK_Start(10UL,blinkLed);
 	//set as output
-	GPIOA->ODR |= (1 << 0);
+	//GPIOA->ODR |= (1 << 0);
 	DMA_HandleTypeDef dma;
 	dma.dma_TypeDef = DMA1_1;
 	dma.dma_Direction = DMA_READ_FROM_MEMORY;
@@ -48,9 +48,23 @@ int main(void)
 	dma.dma_MemIncMode = DMA_MEM_INC_ENABLE;
 	dma.dma_Mode = DMA_NON_CIRCULAR_MODE;
 	DMA_Init(&dma);
-	
-    /* Loop forever */
-	for(;;);
+	DMA_Transfer(&dma, sendArray, receiveArray,2);
+	for (uint32_t i = 0; i < 1000000; i++);
+	//GPIOA->ODR |= (1 << 0);
+	//GPIOA->ODR ^= (1<<0);
+	if(sendArray[0] == receiveArray[0])
+	{
+		GPIOA->ODR |= (1 << 0);
+	}
+//	else
+//	{
+//		GPIOA->ODR |= (1 << 0);
+//	}
+
+		/* Start operation move from array to another array */
+
+		/* Loop forever */
+		for (;;);
 
 }
 
@@ -91,6 +105,15 @@ void WWDG_IRQHandler()
 	GPIOA->ODR |= (1<<0);
 
 }
+
+void DMA_Transfer(DMA_HandleTypeDef *hdma, uint32_t *srcData, uint32_t *destData, uint32_t dataLength)
+{
+	DMA_SetMemoryAddress(hdma, srcData);
+	DMA_SetPeriphAddress(hdma, destData);
+	DMA_SetDataCounter(hdma, dataLength);
+	DMA_Start(hdma);
+}
+
 
 //void TIM7_IRQHandler()
 //{

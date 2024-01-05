@@ -82,12 +82,12 @@ typedef enum{
 
 
 typedef struct{
-	uint32_t ISR;
-	uint32_t IFCR;
-	uint32_t CCR;
-	uint32_t CNTDR;
-	uint32_t CPAR;
-	uint32_t CMAR;
+	volatile uint32_t ISR;
+	volatile uint32_t IFCR;
+	volatile uint32_t CCR;
+	volatile uint32_t CNTDR;
+	volatile uint32_t CPAR;
+	volatile uint32_t CMAR;
 }DMA_TypeDef;
 
 typedef struct{
@@ -105,9 +105,10 @@ typedef struct{
 
 /************************** FUNCTIONS *************************/
 HAL_Status DMA_Init(DMA_HandleTypeDef *copy_dmaHandle);
-HAL_Status DMA_AddPeriphAddress(DMA_HandleTypeDef *copy_dmaHandle,uint32_t *copy_u32PeriphAddress);
+HAL_Status DMA_SetPeriphAddress(DMA_HandleTypeDef *copy_dmaHandle,uint32_t *copy_u32PeriphAddress);
 HAL_Status DMA_SetMemoryAddress(DMA_HandleTypeDef *copy_dmaHandle ,uint32_t *copy_u32MemAddress);
 HAL_Status DMA_Start(DMA_HandleTypeDef *hdma);
-
+HAL_Status DMA_SetDataCounter(DMA_HandleTypeDef *hdma, uint32_t copy_u32DataLength);
+HAL_Status DMA_Stop(DMA_HandleTypeDef *hdma);
 
 #endif /* DRIVERS_DMA_DMA_H_ */

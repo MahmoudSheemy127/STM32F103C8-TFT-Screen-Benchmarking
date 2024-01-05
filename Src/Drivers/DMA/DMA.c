@@ -93,7 +93,7 @@ HAL_Status DMA_Init(DMA_HandleTypeDef *copy_dmaHandle){
  * Returns:
  *   HAL_Status: HAL_OKAY if setting the address is successful, HAL_ERROR otherwise.
  */
-HAL_Status DMA_AddPeriphAddress(DMA_HandleTypeDef *copy_dmaHandle,uint32_t *copy_u32PeriphAddress){
+HAL_Status DMA_SetPeriphAddress(DMA_HandleTypeDef *copy_dmaHandle,uint32_t *copy_u32PeriphAddress){
     HAL_Status hal_Status = HAL_OKAY;
     if(NULL == copy_u32PeriphAddress || NULL == copy_dmaHandle )
     {
@@ -153,4 +153,48 @@ HAL_Status DMA_Start(DMA_HandleTypeDef *hdma){
         SET_BIT(hdma->dma_TypeDef->CCR, DMA_CCR_EN_Pos);
     }
     return hal_Status;
+}
+
+/**
+ * @brief Stops the DMA transfer on the specified DMA channel.
+ *
+ * @param hdma: Pointer to a DMA_HandleTypeDef structure that contains the configuration information for the specified DMA channel.
+ *
+ * @return HAL_Status: HAL_OKAY if the operation was successful, HAL_ERROR if there was an error or if the input parameters are invalid.
+ */
+HAL_Status DMA_Stop(DMA_HandleTypeDef *hdma){
+    HAL_Status hal_Status = HAL_OKAY;
+    if(NULL == hdma )
+    {
+        hal_Status = HAL_ERROR;
+    }
+    else
+    {
+        CLR_BIT(hdma->dma_TypeDef->CCR, DMA_CCR_EN_Pos);
+    }
+    return hal_Status;
+}
+
+/**
+ * @brief Sets the data transfer counter for the specified DMA channel.
+ *
+ * @param hdma: Pointer to a DMA_HandleTypeDef structure that contains the configuration information for the specified DMA channel.
+ * @param copy_u32DataLength: The number of data items to be transferred by the DMA channel.
+ *
+ * @return HAL_Status: HAL_OKAY if the operation was successful, HAL_ERROR if there was an error or if the input parameters are invalid.
+ */
+HAL_Status DMA_SetDataCounter(DMA_HandleTypeDef *hdma, uint32_t copy_u32DataLength)
+{
+    HAL_Status hal_Status = HAL_OKAY;
+    if(NULL == hdma )
+    {
+        hal_Status = HAL_ERROR;
+    }
+    else
+    {
+        hdma->dma_TypeDef->CNTDR = copy_u32DataLength;
+        // SET_BIT(hdma->dma_TypeDef->CCR, DMA_CCR_EN_Pos);
+    }
+    return hal_Status;
+
 }

@@ -1,4 +1,6 @@
 DMA.c:22:12:DMA_Init	24	static
-DMA.c:96:12:DMA_AddPeriphAddress	24	static
+DMA.c:96:12:DMA_SetPeriphAddress	24	static
 DMA.c:121:12:DMA_SetMemoryAddress	24	static
 DMA.c:145:12:DMA_Start	24	static
+DMA.c:165:12:DMA_Stop	24	static
+DMA.c:186:12:DMA_SetDataCounter	24	static
