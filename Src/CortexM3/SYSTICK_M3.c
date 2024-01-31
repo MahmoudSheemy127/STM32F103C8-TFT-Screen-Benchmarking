@@ -23,8 +23,23 @@ void SYSTICK_Init(uint32_t copy_u32SystickNumOfTicks)
 
 	/* Disable SYSTICK */
 	CLR_BIT(SYSTICK->SYSCSR,SYSTICK_CONTROL_STATUS_REGISTER_ENABLE_BIT_POS);
+}
 
-
+void SYSTICK_DelayMs(uint32_t copy_u32DelayMs)
+{
+	/* Set number of overflows */
+	uint32_t overFlowCounter = 0;
+	uint32_t totalOverFlows = copy_u32DelayMs;
+	/* Set Preload register value */
+	// SYSTICK_SetNumOfTicks()
+	// /* Set Number of ticks*/
+	// SYSTICK_SetNumOfTicks((copy_u32DelayMs * 1000) - 1);
+	/* Enable SYSTICK */
+	SET_BIT(SYSTICK->SYSCSR,SYSTICK_CONTROL_STATUS_REGISTER_ENABLE_BIT_POS);
+	/* Wait till flag is raised */
+	while(0 == GET_BIT(SYSTICK->SYSCSR,SYSTICK_CONTROL_STATUS_REGISTER_COUNTFLAG_BIT_POS));
+	/* Disable SYSTICK */
+	CLR_BIT(SYSTICK->SYSCSR,SYSTICK_CONTROL_STATUS_REGISTER_ENABLE_BIT_POS);
 }
 
 static void SYSTICK_SetNumOfTicks(uint32_t copy_u32SystickNumOfTicks)
@@ -39,6 +54,8 @@ static void SYSTICK_SetNumOfTicks(uint32_t copy_u32SystickNumOfTicks)
 			SYSTICK->SYSRVR = copy_u32SystickNumOfTicks;
 	}
 }
+
+
 
 void SYSTICK_DeInit()
 {

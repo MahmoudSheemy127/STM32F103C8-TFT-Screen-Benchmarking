@@ -77,6 +77,15 @@ HAL_Status DMA_Init(DMA_HandleTypeDef *copy_dmaHandle){
             CLR_BIT(copy_dmaHandle->dma_TypeDef->CCR, DMA_CCR_PINC_Pos);
             break;
     }
+    switch(copy_dmaHandle->dma_Interrupt)
+    {
+        case DMA_INTERRUPT_ENABLE:
+            SET_BIT(copy_dmaHandle->dma_TypeDef->CCR, DMA_CCR_TCIE_Pos);
+            break;
+        case DMA_INTERRUPT_DISABLE:
+            CLR_BIT(copy_dmaHandle->dma_TypeDef->CCR, DMA_CCR_TCIE_Pos);
+            break;
+    }
     }
     return hal_Status;
 }
@@ -198,3 +207,109 @@ HAL_Status DMA_SetDataCounter(DMA_HandleTypeDef *hdma, uint32_t copy_u32DataLeng
     return hal_Status;
 
 }
+
+HAL_Status DMA_Transfer(DMA_HandleTypeDef *hdma, uint8_t *srcData, uint8_t *destData, uint32_t dataLength)
+{
+    HAL_Status hal_Status = HAL_OKAY;
+    if(NULL == hdma )
+    {
+        hal_Status = HAL_ERROR;
+    }
+    else
+    {
+        DMA_SetMemoryAddress(hdma, srcData);
+        DMA_SetPeriphAddress(hdma, destData);
+        DMA_SetDataCounter(hdma, dataLength);
+        DMA_Start(hdma);
+
+    }
+    return hal_Status;
+
+}
+
+HAL_Status DMA_SetCallBackFn(DMA_HandleTypeDef *hdma, DMA_CallbackFn callbackFn)
+{
+    HAL_Status hal_Status = HAL_OKAY;
+    if(NULL == hdma )
+    {
+        hal_Status = HAL_ERROR;
+    }
+    else
+    {
+    switch ((uint32_t)hdma->dma_TypeDef)
+    {
+        case (uint32_t)DMA1_1:
+            // Code for DMA1_1
+            DMA1_1_CallbackFnPtr = callbackFn;
+            break;
+        case (uint32_t)DMA1_2:
+            // Code for DMA1_2
+            DMA1_2_CallbackFnPtr = callbackFn;
+            break;
+        case (uint32_t)DMA1_3:
+            // Code for DMA1_3
+            DMA1_3_CallbackFnPtr = callbackFn;
+            break;
+        default:
+            // Default case
+            break;
+    }
+    }
+    return hal_Status;
+}
+
+
+void DMA1_Channel1_IRQHandler()
+{
+    DMA1_1_CallbackFnPtr();
+}
+void DMA1_Channel2_IRQHandler()
+{
+    DMA1_2_CallbackFnPtr();
+}
+void DMA1_Channel3_IRQHandler()
+{
+    DMA1_3_CallbackFnPtr();
+}
+void DMA1_Channel4_IRQHandler()
+{
+
+}
+void DMA1_Channel5_IRQHandler()
+{
+
+}
+void DMA1_Channel6_IRQHandler()
+{
+
+}
+void DMA1_Channel7_IRQHandler()
+{
+
+}
+void DMA2_Channel1_IRQHandler()
+{
+
+}
+void DMA2_Channel2_IRQHandler()
+{
+
+}
+void DMA2_Channel3_IRQHandler()
+{
+
+}
+void DMA2_Channel4_IRQHandler()
+{
+
+}
+void DMA2_Channel5_IRQHandler()
+{
+
+}
+void DMA2_Channel6_IRQHandler()
+{
+
+}
+
+

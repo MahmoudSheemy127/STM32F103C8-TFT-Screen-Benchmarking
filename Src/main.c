@@ -23,16 +23,22 @@
 /* Helper functions */
 void blinkLed();
 void Clock_Config();
-void DMA_Transfer(DMA_HandleTypeDef *hdma, uint32_t *srcData, uint32_t *destData, uint32_t dataLength);
 
 /* Define Global arrays */
-uint32_t sendArray[2] = {2, 3};
-uint32_t receiveArray[2];
+uint8_t sendArray[2] = {2, 3};
+uint8_t receiveArray[2];
+
+/* Define callback function */
+void DMA1_1_CallbackFn();
 
 int main(void)
 {
 
-	RCC->RCC_APB2ENR |= (1 << 2);
+	// RCC->RCC_APB2ENR |= (1 << 2);
+	_RCC_GPIOA_ENABLE();
+	_RCC_DMA1_ENABLE();
+	//ENABLE NVIC Interrupt on DMA1 Channel1
+	NVIC_SetEnableInterrupt(NVIC_IRQ_DMA1_Channel1_IRQHandler);
 //	Clock_Config();
 	GPIOA->CRL |= (1 << 0);
 	GPIOA->CRL &= ~(1 << 2);
@@ -47,15 +53,17 @@ int main(void)
 	dma.dma_Mem2Mem = DMA_MEM2MEM_ENABLE;
 	dma.dma_MemIncMode = DMA_MEM_INC_ENABLE;
 	dma.dma_Mode = DMA_NON_CIRCULAR_MODE;
+	dma.dma_Interrupt = DMA_INTERRUPT_ENABLE;
 	DMA_Init(&dma);
+	DMA_SetCallBackFn(&dma,DMA1_1_CallbackFn);
 	DMA_Transfer(&dma, sendArray, receiveArray,2);
-	for (uint32_t i = 0; i < 1000000; i++);
+	// for (uint32_t i = 0; i < 1000000; i++);
 	//GPIOA->ODR |= (1 << 0);
 	//GPIOA->ODR ^= (1<<0);
-	if(sendArray[0] == receiveArray[0])
-	{
-		GPIOA->ODR |= (1 << 0);
-	}
+	// if(sendArray[1] == receiveArray[1])
+	// {
+	// 	GPIOA->ODR |= (1 << 0);
+	// }
 //	else
 //	{
 //		GPIOA->ODR |= (1 << 0);
@@ -87,10 +95,10 @@ void Clock_Config()
 	}
 
 	//enable rcc clock
-	_RCC_GPIOA_ENABLE;
-	_RCC_GPIOB_ENABLE;
-	_RCC_GPIOC_ENABLE;
-	_RCC_GPIOD_ENABLE;
+	_RCC_GPIOA_ENABLE();
+	_RCC_GPIOB_ENABLE();
+	_RCC_GPIOC_ENABLE();
+	_RCC_GPIOD_ENABLE();
 
 }
 
@@ -103,17 +111,21 @@ void blinkLed()
 void WWDG_IRQHandler()
 {
 	GPIOA->ODR |= (1<<0);
-
 }
 
-void DMA_Transfer(DMA_HandleTypeDef *hdma, uint32_t *srcData, uint32_t *destData, uint32_t dataLength)
+
+void DMA1_1_CallbackFn()
 {
-	DMA_SetMemoryAddress(hdma, srcData);
-	DMA_SetPeriphAddress(hdma, destData);
-	DMA_SetDataCounter(hdma, dataLength);
-	DMA_Start(hdma);
+	if(sendArray[1] != receiveArray[1])
+	{
+		GPIOA->ODR |= (1 << 0);
+	}
+	else
+	{
+		// GPIOA->ODR |= ( << 0);
+		//do nothing
+	}
 }
-
 
 //void TIM7_IRQHandler()
 //{
