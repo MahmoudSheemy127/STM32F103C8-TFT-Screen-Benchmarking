@@ -35,6 +35,7 @@ HAL_Status DMA_Init(DMA_HandleTypeDef *copy_dmaHandle){
             break;
         case DMA_READ_FROM_MEMORY:
             SET_BIT(copy_dmaHandle->dma_TypeDef->CCR, DMA_CCR_DIR_Pos);
+            copy_dmaHandle->dma_TypeDef->CCR = 1<<4;
             break;
     }
     switch(copy_dmaHandle->dma_Mem2Mem)

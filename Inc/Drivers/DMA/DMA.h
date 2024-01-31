@@ -82,12 +82,12 @@ typedef enum{
 
 
 typedef struct{
-	volatile uint32_t ISR;
-	volatile uint32_t IFCR;
-	volatile uint32_t CCR;
-	volatile uint32_t CNTDR;
-	volatile uint32_t CPAR;
-	volatile uint32_t CMAR;
+	uint32_t ISR;
+	uint32_t IFCR;
+	uint32_t CCR;
+	uint32_t CNTDR;
+	uint32_t CPAR;
+	uint32_t CMAR;
 }DMA_TypeDef;
 
 typedef struct{
