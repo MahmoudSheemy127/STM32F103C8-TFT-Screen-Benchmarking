@@ -13,6 +13,31 @@
 #define SPI1                ((SPI_TypeDef*)SPI1_BASE)
 #define SPI2                ((SPI_TypeDef*)SPI2_BASE)
 
+/* BIT POSITIONS */
+#define SPI_CR1_CPHA       (0UL)
+#define SPI_CR1_CPOL       (1UL)
+#define SPI_CR1_MSTR       (2UL)
+#define SPI_CR1_BR         (3UL)
+#define SPI_CR1_SPE        (6UL)
+#define SPI_CR1_LSBFIRST   (7UL)
+#define SPI_CR1_SSI        (8UL)
+#define SPI_CR1_SSM        (9UL)
+#define SPI_CR1_RXONLY     (10UL)
+#define SPI_CR1_DFF        (11UL)
+#define SPI_CR1_CRCNEXT    (12UL)
+#define SPI_CR1_CRCEN      (13UL)
+#define SPI_CR1_BIDIOE     (14UL)
+#define SPI_CR1_BIDIMODE   (15UL)
+#define SPI_CR1_CRCL       (11UL)
+#define SPI_CR1_CRCH       (12UL)
+#define SPI_CR1_CRCPL      (13UL)
+#define SPI_CR1_CRCIEN     (14UL)
+#define SPI_CR1_CRCOEN     (15UL)
+
+
+
+
+
 /*----------END MACROS------------*/
 
 /*----------START MACRO-LIKE FUNCTION----------*/
