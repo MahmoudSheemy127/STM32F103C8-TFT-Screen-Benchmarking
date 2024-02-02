@@ -15,6 +15,7 @@
 /*-------------------MACROS START------------------------*/
 #define NVIC_BASE		(0xE000E100UL)
 #define NVIC			((NVIC_HandleTypeDef*)(NVIC_BASE))
+#define SCB
 /*-------------------MACROS END------------------------*/
 
 /*-------------------FUNCTION LIKE MACROS TYPES START------------------------*/

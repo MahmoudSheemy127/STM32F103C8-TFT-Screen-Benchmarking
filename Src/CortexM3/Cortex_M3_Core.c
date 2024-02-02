@@ -15,7 +15,7 @@
 void NVIC_SetEnableInterrupt(NVIC_IRQ copy_enumIRQ)
 {
     NVIC->ISER[(copy_enumIRQ >> 5)] |= (1 << (copy_enumIRQ & 0x1F));
-
+    
 }
 
 /**

@@ -21,6 +21,7 @@ typedef unsigned long int uint32_t;
 #define SET_BIT(REG,BIT_POS)	(REG |= 1 << BIT_POS)
 #define CLR_BIT(REG,BIT_POS)	(REG &= ~(1 << BIT_POS))
 #define TOGGLE_BIT(REG,BIT_POS)	(REG ^= 1 << BIT_POS)
+#define GET_BIT(REG,BIT_POS)	((REG >> BIT_POS) & 0x01)
 #define READ_REG(REG)			(REG)
 #define WRITE_REG(REG,VAL)		(REG = VAL)
 #define MODIFY_REG(REG,MSK,VAL) (WRITE_REG(REG, (READ_REG(REG) & ~(MSK)) | VAL))

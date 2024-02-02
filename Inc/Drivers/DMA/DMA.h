@@ -30,7 +30,7 @@
 #define DMA_CCR_PL_Pos         12
 #define DMA_CCR_MSIZE_Pos      10
 #define DMA_CCR_PSIZE_Pos      8
-#define DMA_CCR_MINC_Pos       7
+#define DMA_CCR_MINC_Pos       7	
 #define DMA_CCR_PINC_Pos       6
 #define DMA_CCR_CIRC_Pos       5
 #define DMA_CCR_DIR_Pos        4
@@ -40,6 +40,16 @@
 #define DMA_CCR_EN_Pos         0
 
 /************************** DATA TYPES *************************/
+
+typedef void (*DMA_CallbackFn)(void);
+DMA_CallbackFn	DMA1_1_CallbackFnPtr;
+DMA_CallbackFn	DMA1_2_CallbackFnPtr;
+DMA_CallbackFn	DMA1_3_CallbackFnPtr;
+DMA_CallbackFn	DMA1_4_CallbackFnPtr;
+DMA_CallbackFn	DMA1_5_CallbackFnPtr;
+DMA_CallbackFn	DMA1_6_CallbackFnPtr;
+DMA_CallbackFn	DMA1_7_CallbackFnPtr;
+
 
 typedef enum{
 	DMA_CIRCULAR_MODE,
@@ -80,6 +90,11 @@ typedef enum{
 	DMA_PERIPH_INC_DISABLE,
 }DMA_PERIPH_INC_MODE;
 
+typedef enum{
+	DMA_INTERRUPT_ENABLE,
+	DMA_INTERRUPT_DISABLE
+}DMA_INTERRUPT;
+
 
 typedef struct{
 	uint32_t ISR;
@@ -99,6 +114,7 @@ typedef struct{
     DMA_MEM2MEM dma_Mem2Mem;
     DMA_MEM_INC_MODE dma_MemIncMode;
     DMA_PERIPH_INC_MODE dma_PeriphIncMode;
+	DMA_INTERRUPT dma_Interrupt;
 }DMA_HandleTypeDef;
 
 
@@ -110,5 +126,8 @@ HAL_Status DMA_SetMemoryAddress(DMA_HandleTypeDef *copy_dmaHandle ,uint32_t *cop
 HAL_Status DMA_Start(DMA_HandleTypeDef *hdma);
 HAL_Status DMA_SetDataCounter(DMA_HandleTypeDef *hdma, uint32_t copy_u32DataLength);
 HAL_Status DMA_Stop(DMA_HandleTypeDef *hdma);
+HAL_Status DMA_Transfer(DMA_HandleTypeDef *hdma, uint8_t *srcData, uint8_t *destData, uint32_t dataLength);
+HAL_Status DMA_SetCallBackFn(DMA_HandleTypeDef *hdma, DMA_CallbackFn callbackFn);
+
 
 #endif /* DRIVERS_DMA_DMA_H_ */

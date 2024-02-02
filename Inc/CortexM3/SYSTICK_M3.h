@@ -19,6 +19,8 @@
 #define SYSTICK_CLK_SRC_PRESCALER_8										1
 #define SYSTICK_CLK_SRC_PRESCALER										SYSTICK_CLK_SRC_PRESCALER_1
 #define SYSTICK_MAX_PRE_COUNT											(16777216UL)
+#define SYSTICK_ONE_MILLISECOND_TICKS									(8000UL)
+
 
 /* Bit Positions */
 #define SYSTICK_CONTROL_STATUS_REGISTER_CLKSOURCE_BIT_POS				2
@@ -46,6 +48,10 @@ typedef struct{
 	uint32_t SYSCAVR;
 }SYSTICK_TypeDef;
 
+
+uint32_t SYSTICK_NumOfOverflows;
+uint32_t SYSTICK_OverflowCounter;
+
 /*----------END DATATYPES----------*/
 
 
@@ -55,12 +61,12 @@ typedef struct{
 void SYSTICK_DisableInterrupt();
 
 /**
- * @brief Init Systick by setting number of ticks, enabling interrupt and clock source
+ * @brief Init Systick by  enabling interrupt and clock source
  * 
- * @param copy_u32SystickNumOfTicks 
+ * 
  * @return * Systick 
  */
-void SYSTICK_Init(uint32_t copy_u32SystickNumOfTicks);
+void SYSTICK_Init();
 
 /**
  * @brief Denit Systick by clearing number of ticks and disabling interrupt
@@ -94,6 +100,22 @@ void SYSTICK_Stop();
 static void SYSTICK_SetNumOfTicks(uint32_t copy_u32SystickNumOfTicks);
 
 
+/**
+ * @brief Function to delay for a number of milliseconds
+ * 
+ * @param copy_u32DelayMs 
+ */
+void SYSTICK_DelayMs(uint32_t copy_u32DelayMs);
+
+
+
+/**
+ * @brief Function to start a timer with a callback function to fire every interval
+ * 
+ * @param copy_u32SystickNumOfMilliseconds 
+ * @param copy_SystickCallBackFun 
+ */
+void SYSTICK_StartTimer(uint32_t copy_u32SystickNumOfMilliseconds, void(*copy_SystickCallBackFun));
 
 /*----------END FUNCTIONS----------*/
 
