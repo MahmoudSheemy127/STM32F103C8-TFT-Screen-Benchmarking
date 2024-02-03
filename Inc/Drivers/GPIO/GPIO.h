@@ -10,7 +10,7 @@
 
 //define registers
 /*---------------START INCLUDES---------------------*/
-#include "Common/Common.h"
+#include "Drivers/Common/Common.h"
 #include "Std_Types.h"
 /*---------------END INCLUDES-----------------------*/
 
@@ -24,6 +24,8 @@
 #define GPIOF_BASE		(GPIO_BASE+0x1400UL)
 #define GPIOG_BASE		(GPIO_BASE+0x1800UL)
 #define GPIOA			((GPIO_Typedef*)(GPIOA_BASE))
+#define GPIOB 			((GPIO_Typedef*)(GPIOB_BASE))
+
 
 /*---------------END MACROS-------------------------*/
 
@@ -61,10 +63,10 @@ typedef enum{
 	GPIO_CNF_INPUT_ANALOG = 0x00UL,
 	GPIO_CNF_INPUT_FLOATING = 0x01UL,
 	GPIO_CNF_INPUT_PULL = 0x02UL,
-	GPIO_CNF_OUTPUT_PUSH_PULL = 0x00UL,
-	GPIO_CNF_OUTPUT_OPEN_DRAIN = 0x01UL,
-	GPIO_CNF_OUTPUT_ALTFN_PUSH_PULL = 0x02UL,
-	GPIO_CNF_OUTPUT_ALTFN_OPEN_DRAIN = 0x03UL
+	GPIO_CNF_OUTPUT_PUSH_PULL = 0x03UL,
+	GPIO_CNF_OUTPUT_OPEN_DRAIN = 0x04UL,
+	GPIO_CNF_OUTPUT_ALTFN_PUSH_PULL = 0x05UL,
+	GPIO_CNF_OUTPUT_ALTFN_OPEN_DRAIN = 0x06UL
 }GPIO_CNF;
 
 

@@ -31,10 +31,17 @@ DMA_HandleTypeDef dma;
 uint8_t sendArray[2] = {0x02, 0x03};
 uint8_t receiveArray[2];
 SPI_HandleTypeDef spi1;
+SPI_HandleTypeDef spi2;
+
 GPIO_HandleTypeDef mosi1;
 GPIO_HandleTypeDef miso1;
 GPIO_HandleTypeDef sck1;
 GPIO_HandleTypeDef nss1;
+
+GPIO_HandleTypeDef mosi2;
+GPIO_HandleTypeDef miso2;
+GPIO_HandleTypeDef sck2;
+GPIO_HandleTypeDef nss2;
 
 
 /* Define callback function */
@@ -89,8 +96,10 @@ void HAL_Init()
 	/* Init Systick */
 	SYSTICK_Init();
 	/* enable RCC clock */
+	_RCC_GPIOA_ENABLE();
+	_RCC_GPIOB_ENABLE();
 	_RCC_SPI1_ENABLE();
-	/* Init SPI */
+	/* Init SPI 1 as master */
 	spi1.Instance = SPI1;
 	spi1.Mode = SPI_MODE_MASTER;
 	spi1.DataSize = SPI_DATASIZE_8BIT;
@@ -132,7 +141,55 @@ void HAL_Init()
 	nss1.GPIO_Mode = GPIO_MODE_OUTPUT_50MHZ;
 	nss1.GPIO_CNF = GPIO_CNF_OUTPUT_PUSH_PULL;
 	GPIO_Init(&nss1);
+
 	SPI_Init(&spi1);
+
+	/* Init SPI 2 as slave */
+	_RCC_SPI2_ENABLE();
+	spi2.Instance = SPI2;
+	spi2.Mode = SPI_MODE_SLAVE;
+	spi2.DataSize = SPI_DATASIZE_8BIT;
+	spi2.CPOL = SPI_CPOL_LOW;
+	spi2.CPHA = SPI_CPHA_1EDGE;
+	spi2.BaudRate = SPI_BAUDRATE_DIV2;
+	spi2.NSS = SPI_NSS_HARD;
+	spi2.BiDir = SPI_BIDIR_DISABLE;
+	spi2.CRC = SPI_CRC_DISABLE;
+	spi2.FirstBit = SPI_LSB_FIRST;
+	spi2.CRCPolynomial = SPI_CRC_POLYNOMIAL_7BIT;
+	spi2.CRCDir = SPI_CRC_TX;
+
+	/* Init MOSI,MISO,SCK,NSS pin configs */
+	/* Init MOSI pin */
+	mosi2.GPIO_TypeDef = PORT_SPI2;
+	mosi2.GPIO_Pin = MOSI_SPI2;
+	mosi2.GPIO_Mode = GPIO_MODE_OUTPUT_50MHZ;
+	mosi2.GPIO_CNF = GPIO_CNF_OUTPUT_PUSH_PULL;
+	GPIO_Init(&mosi2);
+
+	/* Init MISO pin */
+	miso2.GPIO_TypeDef = PORT_SPI2;
+	miso2.GPIO_Pin = MISO_SPI2;
+	miso2.GPIO_Mode = GPIO_MODE_INPUT;
+	miso2.GPIO_CNF = GPIO_CNF_INPUT_FLOATING;
+	GPIO_Init(&miso2);
+
+	/* Init SCK pin */
+	sck2.GPIO_TypeDef = PORT_SPI2;
+	sck2.GPIO_Pin = SCK_SPI2;
+	sck2.GPIO_Mode = GPIO_MODE_OUTPUT_50MHZ;
+	sck2.GPIO_CNF = GPIO_CNF_OUTPUT_PUSH_PULL;
+	GPIO_Init(&sck2);
+
+	/* Init NSS pin */
+	nss2.GPIO_TypeDef = PORT_SPI2;
+	nss2.GPIO_Pin = NSS_SPI2;
+	nss2.GPIO_Mode = GPIO_MODE_OUTPUT_50MHZ;
+	nss2.GPIO_CNF = GPIO_CNF_OUTPUT_PUSH_PULL;
+	GPIO_Init(&nss2);
+	
+	SPI_Init(&spi2);
+
 
 	// dma.dma_TypeDef = DMA1_1;
 	// dma.dma_Direction = DMA_READ_FROM_MEMORY;

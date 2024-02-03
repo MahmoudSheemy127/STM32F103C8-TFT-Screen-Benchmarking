@@ -42,6 +42,7 @@
 #define MISO_SPI1          GPIO_PIN_6
 #define SCK_SPI1           GPIO_PIN_5
 #define NSS_SPI1           GPIO_PIN_4
+
 #define PORT_SPI2          GPIOB
 #define MOSI_SPI2          GPIO_PIN_15
 #define MISO_SPI2          GPIO_PIN_14

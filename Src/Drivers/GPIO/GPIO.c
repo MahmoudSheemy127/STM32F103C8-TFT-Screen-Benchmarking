@@ -121,7 +121,9 @@ HAL_Status GPIO_Init(GPIO_HandleTypeDef* gpio_handle)
         }
 
     }    
+    }
     return status;
+
 }
 
 
