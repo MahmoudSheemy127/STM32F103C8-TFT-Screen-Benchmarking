@@ -3,6 +3,7 @@
 "./Src/Drivers/DMA/DMA.o"
 "./Src/Drivers/GPIO/GPIO.o"
 "./Src/Drivers/RCC/RCC.o"
+"./Src/Drivers/SPI/SPI.o"
 "./Src/main.o"
 "./Src/syscalls.o"
 "./Src/sysmem.o"

@@ -25,6 +25,7 @@ Src/CortexM3 \
 Src/Drivers/DMA \
 Src/Drivers/GPIO \
 Src/Drivers/RCC \
+Src/Drivers/SPI \
 Src \
 Startup \
 

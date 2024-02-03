@@ -3,7 +3,7 @@
 #define SPI_H
 
 /*----------START INCLUDES----------*/
-#include "Common.h"
+#include "Drivers/Common/Common.h"
 #include "Std_Types.h"
 /*----------END INCLUDES------------*/
 
@@ -33,8 +33,22 @@
 #define SPI_CR1_CRCPL      (13UL)
 #define SPI_CR1_CRCIEN     (14UL)
 #define SPI_CR1_CRCOEN     (15UL)
+#define SPI_SR_TXE         (1)
+#define SPI_SR_RXNE        (0)
 
+/* SPI PINS */
+#define PORT_SPI1          GPIOA
+#define MOSI_SPI1          GPIO_PIN_7
+#define MISO_SPI1          GPIO_PIN_6
+#define SCK_SPI1           GPIO_PIN_5
+#define NSS_SPI1           GPIO_PIN_4
+#define PORT_SPI2          GPIOB
+#define MOSI_SPI2          GPIO_PIN_15
+#define MISO_SPI2          GPIO_PIN_14
+#define SCK_SPI2           GPIO_PIN_13
+#define NSS_SPI2           GPIO_PIN_12
 
+#define SPI_BR_MSK         (0x7UL << SPI_CR1_BR)
 
 
 

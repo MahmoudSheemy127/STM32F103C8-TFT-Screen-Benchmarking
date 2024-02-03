@@ -12,7 +12,9 @@
 #include "Drivers/GPIO/GPIO.h"
 #include "Drivers/RCC/RCC.h"
 #include "Drivers/DMA/DMA.h"
+#include "Drivers/SPI/SPI.h"
 #include "CortexM3/SYSTICK_M3.h"
+
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
@@ -25,51 +27,34 @@ void blinkLed();
 void Clock_Config();
 
 /* Define Global arrays */
-uint8_t sendArray[2] = {2, 3};
+DMA_HandleTypeDef dma;
+uint8_t sendArray[2] = {0x02, 0x03};
 uint8_t receiveArray[2];
+SPI_HandleTypeDef spi1;
+GPIO_HandleTypeDef mosi1;
+GPIO_HandleTypeDef miso1;
+GPIO_HandleTypeDef sck1;
+GPIO_HandleTypeDef nss1;
+
 
 /* Define callback function */
 void DMA1_1_CallbackFn();
 
+void HAL_Init();
+
 int main(void)
 {
 
-	// RCC->RCC_APB2ENR |= (1 << 2);
-	_RCC_GPIOA_ENABLE();
-	_RCC_DMA1_ENABLE();
-	//ENABLE NVIC Interrupt on DMA1 Channel1
-	NVIC_SetEnableInterrupt(NVIC_IRQ_DMA1_Channel1_IRQHandler);
-//	Clock_Config();
-	GPIOA->CRL |= (1 << 0);
-	GPIOA->CRL &= ~(1 << 2);
-	SYSTICK_Init();
-	SYSTICK_StartTimer(200,blinkLed);
-	// NVIC_SetEnableInterrupt(NVIC_IRQ_SysTick_Handler);
-	//SYSTICK_Start(10UL,blinkLed);
-	//set as output
-	//GPIOA->ODR |= (1 << 0);
-	// DMA_HandleTypeDef dma;
-	// dma.dma_TypeDef = DMA1_1;
-	// dma.dma_Direction = DMA_READ_FROM_MEMORY;
-	// dma.dma_Mem2Mem = DMA_MEM2MEM_ENABLE;
-	// dma.dma_MemIncMode = DMA_MEM_INC_ENABLE;
-	// dma.dma_Mode = DMA_NON_CIRCULAR_MODE;
-	// dma.dma_Interrupt = DMA_INTERRUPT_ENABLE;
-	// DMA_Init(&dma);
-	// DMA_SetCallBackFn(&dma,DMA1_1_CallbackFn);
-	// DMA_Transfer(&dma, sendArray, receiveArray,2);
-	// for (uint32_t i = 0; i < 1000000; i++);
-	//GPIOA->ODR |= (1 << 0);
-	//GPIOA->ODR ^= (1<<0);
+	HAL_Init();
+	/* Loop forever */
+	while(1)
+	{
+		SPI_Transmit(&spi1, sendArray, 2, 1000);
+		SYSTICK_DelayMs(500);
 
-		/* Start operation move from array to another array */
-
-		/* Loop forever */
-		while(1)
-		{
-			// blinkLed();
-			// SYSTICK_DelayMs(500);
-		}
+		// blinkLed();
+		// SYSTICK_DelayMs(500);
+	}
 
 }
 
@@ -99,6 +84,68 @@ void Clock_Config()
 
 }
 
+void HAL_Init()
+{
+	/* Init Systick */
+	SYSTICK_Init();
+	/* enable RCC clock */
+	_RCC_SPI1_ENABLE();
+	/* Init SPI */
+	spi1.Instance = SPI1;
+	spi1.Mode = SPI_MODE_MASTER;
+	spi1.DataSize = SPI_DATASIZE_8BIT;
+	spi1.CPOL = SPI_CPOL_LOW;
+	spi1.CPHA = SPI_CPHA_1EDGE;
+	spi1.BaudRate = SPI_BAUDRATE_DIV2;
+	spi1.NSS = SPI_NSS_HARD;
+	spi1.BiDir = SPI_BIDIR_DISABLE;
+	spi1.CRC = SPI_CRC_DISABLE;
+	spi1.FirstBit = SPI_LSB_FIRST;
+	spi1.CRCPolynomial = SPI_CRC_POLYNOMIAL_7BIT;
+	spi1.CRCDir = SPI_CRC_TX;
+
+	/* Init MOSI,MISO,SCK,NSS pin configs */
+	/* Init MOSI pin */
+	mosi1.GPIO_TypeDef = PORT_SPI1;
+	mosi1.GPIO_Pin = MOSI_SPI1;
+	mosi1.GPIO_Mode = GPIO_MODE_OUTPUT_50MHZ;
+	mosi1.GPIO_CNF = GPIO_CNF_OUTPUT_PUSH_PULL;
+	GPIO_Init(&mosi1);
+
+	/* Init MISO pin */
+	miso1.GPIO_TypeDef = PORT_SPI1;
+	miso1.GPIO_Pin = MISO_SPI1;
+	miso1.GPIO_Mode = GPIO_MODE_INPUT;
+	miso1.GPIO_CNF = GPIO_CNF_INPUT_FLOATING;
+	GPIO_Init(&miso1);
+
+	/* Init SCK pin */
+	sck1.GPIO_TypeDef = PORT_SPI1;
+	sck1.GPIO_Pin = SCK_SPI1;
+	sck1.GPIO_Mode = GPIO_MODE_OUTPUT_50MHZ;
+	sck1.GPIO_CNF = GPIO_CNF_OUTPUT_PUSH_PULL;
+	GPIO_Init(&sck1);
+
+	/* Init NSS pin */
+	nss1.GPIO_TypeDef = PORT_SPI1;
+	nss1.GPIO_Pin = NSS_SPI1;
+	nss1.GPIO_Mode = GPIO_MODE_OUTPUT_50MHZ;
+	nss1.GPIO_CNF = GPIO_CNF_OUTPUT_PUSH_PULL;
+	GPIO_Init(&nss1);
+	SPI_Init(&spi1);
+
+	// dma.dma_TypeDef = DMA1_1;
+	// dma.dma_Direction = DMA_READ_FROM_MEMORY;
+	// dma.dma_Mem2Mem = DMA_MEM2MEM_ENABLE;
+	// dma.dma_MemIncMode = DMA_MEM_INC_ENABLE;
+	// dma.dma_Mode = DMA_NON_CIRCULAR_MODE;
+	// dma.dma_Interrupt = DMA_INTERRUPT_ENABLE;
+	// DMA_Init(&dma);
+	// DMA_SetCallBackFn(&dma,DMA1_1_CallbackFn);
+	// DMA_Transfer(&dma, sendArray, receiveArray,2);
+
+
+}
 
 void blinkLed()
 {
