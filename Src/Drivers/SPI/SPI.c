@@ -44,6 +44,19 @@ HAL_Status SPI_Init(SPI_HandleTypeDef* hspi)
         {
             status = HAL_ERROR;
         }
+        /* Set SPI Bi-Directional mode */
+        if(hspi->BiDir == SPI_BIDIR_ENABLE)
+        {
+            SET_BIT(hspi->Instance->CR1, SPI_CR1_BIDIMODE);
+        }
+        else if(hspi->BiDir == SPI_BIDIR_DISABLE)
+        {
+            CLR_BIT(hspi->Instance->CR1, SPI_CR1_BIDIMODE);
+        }
+        else
+        {
+            status = HAL_ERROR;
+        }
         /* Set SPI Data Size */
         if(hspi->DataSize == SPI_DATASIZE_8BIT)
         {

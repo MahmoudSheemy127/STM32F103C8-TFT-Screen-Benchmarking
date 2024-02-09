@@ -127,7 +127,7 @@ HAL_Status GPIO_Init(GPIO_HandleTypeDef* gpio_handle)
 }
 
 
-HAL_Status GPIO_WritePin(GPIO_HandleTypeDef* gpio_handle)
+HAL_Status GPIO_WritePin(GPIO_HandleTypeDef* gpio_handle, GPIO_PinState pin_state)
 {
     HAL_Status status = HAL_OKAY;
     if(NULL == gpio_handle)
@@ -136,11 +136,11 @@ HAL_Status GPIO_WritePin(GPIO_HandleTypeDef* gpio_handle)
     }
     else
     {
-        if(GPIO_PIN_RESET == gpio_handle->GPIO_PinState)
+        if(GPIO_PIN_RESET == pin_state)
         {
             gpio_handle->GPIO_TypeDef->BRR |= (1UL << gpio_handle->GPIO_Pin);
         }
-        else if(GPIO_PIN_SET == gpio_handle->GPIO_PinState)
+        else if(GPIO_PIN_SET == pin_state)
         {
             gpio_handle->GPIO_TypeDef->BSRR |= (1UL << gpio_handle->GPIO_Pin);
         }
