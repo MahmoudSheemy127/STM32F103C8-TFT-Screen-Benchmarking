@@ -17,7 +17,8 @@
 
 /* DMA periph base */
 #define DMA1_BASE			(AHB_BASE+(uint32_t)0x8000)
-#define DMA1_1				(DMA_TypeDef*)(DMA1_BASE)
+#define DMA1				(DMA_GTypeDef*)(DMA1_BASE)
+#define DMA1_1				(DMA_TypeDef*)(DMA1_BASE+0x008)
 #define DMA1_2				(DMA_TypeDef*)(DMA1_BASE+0x01C)
 #define DMA1_3				(DMA_TypeDef*)(DMA1_BASE+0x030)
 #define DMA1_4				(DMA_TypeDef*)(DMA1_BASE+0x044)
@@ -61,8 +62,6 @@ typedef enum{
 	DMA_READ_FROM_MEMORY
 }DMA_TRANSFER_DIRECTION;
 
-
-
 typedef enum{
 	DMA_MEM_SIZE_8_BITS,
 	DMA_MEM_SIZE_16_BITS,
@@ -99,6 +98,9 @@ typedef enum{
 typedef struct{
 	uint32_t ISR;
 	uint32_t IFCR;
+}DMA_GTypeDef;
+
+typedef struct{
 	uint32_t CCR;
 	uint32_t CNTDR;
 	uint32_t CPAR;
@@ -121,8 +123,8 @@ typedef struct{
 
 /************************** FUNCTIONS *************************/
 HAL_Status DMA_Init(DMA_HandleTypeDef *copy_dmaHandle);
-HAL_Status DMA_SetPeriphAddress(DMA_HandleTypeDef *copy_dmaHandle,uint32_t *copy_u32PeriphAddress);
-HAL_Status DMA_SetMemoryAddress(DMA_HandleTypeDef *copy_dmaHandle ,uint32_t *copy_u32MemAddress);
+HAL_Status DMA_SetPeriphAddress(DMA_HandleTypeDef *copy_dmaHandle,uint8_t *copy_u32PeriphAddress);
+HAL_Status DMA_SetMemoryAddress(DMA_HandleTypeDef *copy_dmaHandle ,uint8_t *copy_u32MemAddress);
 HAL_Status DMA_Start(DMA_HandleTypeDef *hdma);
 HAL_Status DMA_SetDataCounter(DMA_HandleTypeDef *hdma, uint32_t copy_u32DataLength);
 HAL_Status DMA_Stop(DMA_HandleTypeDef *hdma);

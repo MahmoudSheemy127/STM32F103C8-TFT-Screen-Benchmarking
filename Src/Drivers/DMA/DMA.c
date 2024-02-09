@@ -103,7 +103,7 @@ HAL_Status DMA_Init(DMA_HandleTypeDef *copy_dmaHandle){
  * Returns:
  *   HAL_Status: HAL_OKAY if setting the address is successful, HAL_ERROR otherwise.
  */
-HAL_Status DMA_SetPeriphAddress(DMA_HandleTypeDef *copy_dmaHandle,uint32_t *copy_u32PeriphAddress){
+HAL_Status DMA_SetPeriphAddress(DMA_HandleTypeDef *copy_dmaHandle,uint8_t *copy_u32PeriphAddress){
     HAL_Status hal_Status = HAL_OKAY;
     if(NULL == copy_u32PeriphAddress || NULL == copy_dmaHandle )
     {
@@ -128,7 +128,7 @@ HAL_Status DMA_SetPeriphAddress(DMA_HandleTypeDef *copy_dmaHandle,uint32_t *copy
  * Returns:
  *   HAL_Status: HAL_OKAY if setting the address is successful, HAL_ERROR otherwise.
  */
-HAL_Status DMA_SetMemoryAddress(DMA_HandleTypeDef *copy_dmaHandle ,uint32_t *copy_u32MemAddress){
+HAL_Status DMA_SetMemoryAddress(DMA_HandleTypeDef *copy_dmaHandle ,uint8_t *copy_u32MemAddress){
     HAL_Status hal_Status = HAL_OKAY;
     if(NULL == copy_u32MemAddress || NULL == copy_dmaHandle )
     {
@@ -274,7 +274,7 @@ void DMA1_Channel3_IRQHandler()
 }
 void DMA1_Channel4_IRQHandler()
 {
-
+    DMA1_3_CallbackFnPtr();
 }
 void DMA1_Channel5_IRQHandler()
 {

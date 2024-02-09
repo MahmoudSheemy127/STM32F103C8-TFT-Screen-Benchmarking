@@ -28,8 +28,8 @@ void Clock_Config();
 
 /* Define Global arrays */
 DMA_HandleTypeDef dma;
-uint8_t sendArray[2] = {0x02, 0x03};
-uint8_t receiveArray[2];
+uint8_t sendArray[5] = {0x01, 0x02,0x03,0x04,0x05};
+uint8_t receiveArray[5];
 SPI_HandleTypeDef spi1;
 SPI_HandleTypeDef spi2;
 
@@ -43,6 +43,9 @@ GPIO_HandleTypeDef miso2;
 GPIO_HandleTypeDef sck2;
 GPIO_HandleTypeDef nss2;
 
+DMA_HandleTypeDef spiTxdma;
+DMA_HandleTypeDef spiRxdma;
+
 
 /* Define callback function */
 void DMA1_1_CallbackFn();
@@ -54,10 +57,13 @@ int main(void)
 
 	HAL_Init();
 	/* Loop forever */
+	NVIC_SetEnableInterrupt(NVIC_IRQ_DMA1_Channel4_IRQHandler);
+	SPI_ReceiveDMA(&spi2, receiveArray,5);
+	SPI_TransmitDMA(&spi1, sendArray, 5);
 	while(1)
 	{
-		SPI_Transmit(&spi1, sendArray, 2, 1000);
-		SYSTICK_DelayMs(500);
+		//SPI_Transmit(&spi1, sendArray, 2, 1000);
+		//SYSTICK_DelayMs(500);
 
 		// blinkLed();
 		// SYSTICK_DelayMs(500);
@@ -99,6 +105,8 @@ void HAL_Init()
 	_RCC_GPIOA_ENABLE();
 	_RCC_GPIOB_ENABLE();
 	_RCC_SPI1_ENABLE();
+	_RCC_DMA1_ENABLE();
+
 	/* Init SPI 1 as master */
 	spi1.Instance = SPI1;
 	spi1.Mode = SPI_MODE_MASTER;
@@ -106,19 +114,22 @@ void HAL_Init()
 	spi1.CPOL = SPI_CPOL_LOW;
 	spi1.CPHA = SPI_CPHA_1EDGE;
 	spi1.BaudRate = SPI_BAUDRATE_DIV2;
-	spi1.NSS = SPI_NSS_HARD;
+	spi1.NSS = SPI_NSS_DISABLE;
 	spi1.BiDir = SPI_BIDIR_DISABLE;
 	spi1.CRC = SPI_CRC_DISABLE;
 	spi1.FirstBit = SPI_LSB_FIRST;
 	spi1.CRCPolynomial = SPI_CRC_POLYNOMIAL_7BIT;
 	spi1.CRCDir = SPI_CRC_TX;
+	spi1.SpiTxDma = SPI_TX_DMA_ENABLE;
+	spi1.SpiRxDma = SPI_RX_DMA_DISABLE;
+
 
 	/* Init MOSI,MISO,SCK,NSS pin configs */
 	/* Init MOSI pin */
 	mosi1.GPIO_TypeDef = PORT_SPI1;
 	mosi1.GPIO_Pin = MOSI_SPI1;
-	mosi1.GPIO_Mode = GPIO_MODE_OUTPUT_50MHZ;
-	mosi1.GPIO_CNF = GPIO_CNF_OUTPUT_PUSH_PULL;
+	mosi1.GPIO_Mode = GPIO_MODE_OUTPUT_2MHZ;
+	mosi1.GPIO_CNF = GPIO_CNF_OUTPUT_ALTFN_PUSH_PULL;
 	GPIO_Init(&mosi1);
 
 	/* Init MISO pin */
@@ -131,16 +142,32 @@ void HAL_Init()
 	/* Init SCK pin */
 	sck1.GPIO_TypeDef = PORT_SPI1;
 	sck1.GPIO_Pin = SCK_SPI1;
-	sck1.GPIO_Mode = GPIO_MODE_OUTPUT_50MHZ;
-	sck1.GPIO_CNF = GPIO_CNF_OUTPUT_PUSH_PULL;
+	sck1.GPIO_Mode = GPIO_MODE_OUTPUT_2MHZ;
+	sck1.GPIO_CNF = GPIO_CNF_OUTPUT_ALTFN_PUSH_PULL;
 	GPIO_Init(&sck1);
 
 	/* Init NSS pin */
 	nss1.GPIO_TypeDef = PORT_SPI1;
 	nss1.GPIO_Pin = NSS_SPI1;
-	nss1.GPIO_Mode = GPIO_MODE_OUTPUT_50MHZ;
-	nss1.GPIO_CNF = GPIO_CNF_OUTPUT_PUSH_PULL;
+	nss1.GPIO_Mode = GPIO_MODE_OUTPUT_2MHZ;
+	nss1.GPIO_CNF = GPIO_CNF_OUTPUT_ALTFN_PUSH_PULL;
 	GPIO_Init(&nss1);
+
+
+	/*Init DMA channels */
+	spiTxdma.dma_TypeDef = DMA1_3;
+	spiTxdma.dma_Mem2Mem = DMA_MEM2MEM_DISABLE;
+	spiTxdma.dma_Mode = DMA_NON_CIRCULAR_MODE;
+	spiTxdma.dma_Direction = DMA_READ_FROM_MEMORY;
+	spiTxdma.dma_MemSize = DMA_MEM_SIZE_8_BITS;
+	spiTxdma.dma_PeriphSize = DMA_PERIPH_SIZE_8_BITS;
+	spiTxdma.dma_MemIncMode = DMA_MEM_INC_ENABLE;
+	spiTxdma.dma_PeriphIncMode = DMA_PERIPH_INC_DISABLE;
+	spiTxdma.dma_Interrupt = DMA_INTERRUPT_DISABLE;
+
+	spi1.txdma = &spiTxdma;
+
+	DMA_Init(spi1.txdma);
 
 	SPI_Init(&spi1);
 
@@ -158,36 +185,54 @@ void HAL_Init()
 	spi2.FirstBit = SPI_LSB_FIRST;
 	spi2.CRCPolynomial = SPI_CRC_POLYNOMIAL_7BIT;
 	spi2.CRCDir = SPI_CRC_TX;
+	spi2.SpiTxDma = SPI_TX_DMA_DISABLE;
+	spi2.SpiRxDma = SPI_RX_DMA_ENABLE;
 
 	/* Init MOSI,MISO,SCK,NSS pin configs */
 	/* Init MOSI pin */
 	mosi2.GPIO_TypeDef = PORT_SPI2;
 	mosi2.GPIO_Pin = MOSI_SPI2;
-	mosi2.GPIO_Mode = GPIO_MODE_OUTPUT_50MHZ;
-	mosi2.GPIO_CNF = GPIO_CNF_OUTPUT_PUSH_PULL;
+	mosi2.GPIO_Mode = GPIO_MODE_INPUT;
+	mosi2.GPIO_CNF = GPIO_CNF_INPUT_FLOATING;
 	GPIO_Init(&mosi2);
 
 	/* Init MISO pin */
 	miso2.GPIO_TypeDef = PORT_SPI2;
 	miso2.GPIO_Pin = MISO_SPI2;
-	miso2.GPIO_Mode = GPIO_MODE_INPUT;
-	miso2.GPIO_CNF = GPIO_CNF_INPUT_FLOATING;
+	miso2.GPIO_Mode = GPIO_MODE_OUTPUT_2MHZ;
+	miso2.GPIO_CNF = GPIO_CNF_OUTPUT_ALTFN_PUSH_PULL;
 	GPIO_Init(&miso2);
 
 	/* Init SCK pin */
 	sck2.GPIO_TypeDef = PORT_SPI2;
 	sck2.GPIO_Pin = SCK_SPI2;
-	sck2.GPIO_Mode = GPIO_MODE_OUTPUT_50MHZ;
-	sck2.GPIO_CNF = GPIO_CNF_OUTPUT_PUSH_PULL;
+	sck2.GPIO_Mode = GPIO_MODE_INPUT;
+	sck2.GPIO_CNF = GPIO_CNF_INPUT_FLOATING;
 	GPIO_Init(&sck2);
 
 	/* Init NSS pin */
 	nss2.GPIO_TypeDef = PORT_SPI2;
 	nss2.GPIO_Pin = NSS_SPI2;
-	nss2.GPIO_Mode = GPIO_MODE_OUTPUT_50MHZ;
-	nss2.GPIO_CNF = GPIO_CNF_OUTPUT_PUSH_PULL;
+	nss2.GPIO_Mode = GPIO_MODE_INPUT;
+	nss2.GPIO_CNF = GPIO_CNF_INPUT_FLOATING;
 	GPIO_Init(&nss2);
 	
+	/*Init DMA channels */
+	spiRxdma.dma_TypeDef = DMA1_4;
+	spiRxdma.dma_Mem2Mem = DMA_MEM2MEM_DISABLE;
+	spiRxdma.dma_Mode = DMA_NON_CIRCULAR_MODE;
+	spiRxdma.dma_Direction = DMA_READ_FROM_PERIPHERAL;
+	spiRxdma.dma_MemSize = DMA_MEM_SIZE_8_BITS;
+	spiRxdma.dma_PeriphSize = DMA_PERIPH_SIZE_8_BITS;
+	spiRxdma.dma_MemIncMode = DMA_MEM_INC_ENABLE;
+	spiRxdma.dma_PeriphIncMode = DMA_PERIPH_INC_DISABLE;
+	spiRxdma.dma_Interrupt = DMA_INTERRUPT_ENABLE;
+
+	spi2.rxdma = &spiRxdma;
+
+	DMA_Init(spi2.rxdma);
+
+
 	SPI_Init(&spi2);
 
 

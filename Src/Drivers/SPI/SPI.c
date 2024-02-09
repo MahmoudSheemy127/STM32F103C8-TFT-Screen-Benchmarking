@@ -1,3 +1,4 @@
+#include "Drivers/DMA/DMA.h"
 #include "Drivers/SPI/SPI.h"
 
 
@@ -12,8 +13,24 @@ HAL_Status SPI_Init(SPI_HandleTypeDef* hspi)
     else
     {
         
-        /* Enable SPI */
-        SET_BIT(hspi->Instance->CR1, SPI_CR1_SPE);
+        /* Set SPI Slave Select */
+        if(hspi->NSS == SPI_NSS_HARD)
+        {
+            CLR_BIT(hspi->Instance->CR1, SPI_CR1_SSM);
+        }
+        else if(hspi->NSS == SPI_NSS_SOFT)
+        {
+            SET_BIT(hspi->Instance->CR1, SPI_CR1_SSM);
+        }
+        else if(hspi->NSS == SPI_NSS_DISABLE)
+        {
+            SET_BIT(hspi->Instance->CR1, SPI_CR1_SSM);
+            SET_BIT(hspi->Instance->CR1, SPI_CR1_SSI);
+        }
+        else
+        {
+            status = HAL_ERROR;
+        }
         /* Set SPI mode */
         if(hspi->Mode == SPI_MODE_MASTER)
         {
@@ -66,19 +83,29 @@ HAL_Status SPI_Init(SPI_HandleTypeDef* hspi)
         {
             status = HAL_ERROR;
         }
-        /* Set SPI Slave Select */
-        if(hspi->NSS == SPI_NSS_HARD)
+
+        /*Set TX DMA Option */
+        if(hspi->SpiTxDma == SPI_TX_DMA_ENABLE)
         {
-            CLR_BIT(hspi->Instance->CR1, SPI_CR1_SSM);
-        }
-        else if(hspi->NSS == SPI_NSS_SOFT)
-        {
-            SET_BIT(hspi->Instance->CR1, SPI_CR1_SSM);
+            SET_BIT(hspi->Instance->CR2, SPI_CR2_TXDMAEN);
         }
         else
         {
-            status = HAL_ERROR;
+            CLR_BIT(hspi->Instance->CR2, SPI_CR2_TXDMAEN);
         }
+
+        /*Set DMA Option */
+        if(hspi->SpiRxDma == SPI_RX_DMA_ENABLE)
+        {
+            SET_BIT(hspi->Instance->CR2, SPI_CR2_RXDMAEN);
+        }
+        else
+        {
+            CLR_BIT(hspi->Instance->CR2, SPI_CR2_RXDMAEN);
+        }
+
+
+
         /* Set SPI Baud Rate */
         switch(hspi->BaudRate)
         {
@@ -120,8 +147,11 @@ HAL_Status SPI_Init(SPI_HandleTypeDef* hspi)
                 status = HAL_ERROR;
                 break;
         }
+        /* Enable SPI */
+        SET_BIT(hspi->Instance->CR1, SPI_CR1_SPE);
 
     }
+
     return status;
 }
 
@@ -221,3 +251,70 @@ HAL_Status SPI_Receive(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size, u
     }
     return status;    
 }
+
+/**
+ * @brief SPI Transmit function using DMA
+ * 
+ * @param hspi 
+ * @param pData 
+ * @param Size 
+ * @return HAL_Status 
+ */
+HAL_Status SPI_TransmitDMA(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size)
+{
+    HAL_Status status = HAL_OKAY;
+    if(NULL == hspi)
+    {
+        status = HAL_ERROR;
+    }
+    else
+    {
+        /* Set the DMA channel memory address */
+        DMA_SetMemoryAddress(hspi->txdma, pData);
+
+        /* Set the DMA channel peripheral address */
+        DMA_SetPeriphAddress(hspi->txdma, &(hspi->Instance->DR));
+
+        /* Set the DMA channel count */
+        DMA_SetDataCounter(hspi->txdma,Size);
+
+        /* Start sending */
+        DMA_Start(hspi->txdma);
+    }
+    return status;
+}
+
+
+/**
+ * @brief SPI Receive function using DMA
+ * 
+ * @param hspi 
+ * @param pData 
+ * @param Size 
+ * @return HAL_Status 
+ */
+HAL_Status SPI_ReceiveDMA(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size)
+{
+    HAL_Status status = HAL_OKAY;
+    if(NULL == hspi)
+    {
+        status = HAL_ERROR;
+    }
+    else
+    {
+        /* Set the DMA channel memory address */
+        DMA_SetMemoryAddress(hspi->rxdma, pData);
+
+        /* Set the DMA channel peripheral address */
+        DMA_SetPeriphAddress(hspi->rxdma, &(hspi->Instance->DR));
+
+        /* Set the DMA channel count */
+        DMA_SetDataCounter(hspi->rxdma,Size);
+
+        /* Start receiving */
+        DMA_Start(hspi->rxdma);
+    }
+    return status;
+}
+
+

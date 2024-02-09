@@ -33,6 +33,9 @@
 #define SPI_CR1_CRCPL      (13UL)
 #define SPI_CR1_CRCIEN     (14UL)
 #define SPI_CR1_CRCOEN     (15UL)
+#define SPI_CR2_TXDMAEN    (1UL)
+#define SPI_CR2_RXDMAEN    (0UL)
+
 #define SPI_SR_TXE         (1)
 #define SPI_SR_RXNE        (0)
 
@@ -100,7 +103,8 @@ typedef enum{
 
 typedef enum{
     SPI_NSS_SOFT = 0x00UL,
-    SPI_NSS_HARD = 0x01UL
+    SPI_NSS_HARD = 0x01UL,
+    SPI_NSS_DISABLE = 0x02UL
 }SPI_NSS;
 
 typedef enum{
@@ -125,6 +129,16 @@ typedef enum{
     SPI_CRC_TX = 0x01UL
 }SPI_CRC_DIR;
 
+typedef enum{
+    SPI_TX_DMA_ENABLE = 0x00UL,
+    SPI_TX_DMA_DISABLE = 0x01UL
+}SPI_TX_DMA;
+
+typedef enum{
+    SPI_RX_DMA_ENABLE = 0x00UL,
+    SPI_RX_DMA_DISABLE = 0x01UL
+}SPI_RX_DMA;
+
 
 
 
@@ -146,8 +160,12 @@ typedef struct{
     SPI_BaudRate BaudRate;
     SPI_CPOL CPOL;
     SPI_CPHA CPHA;
+    DMA_HandleTypeDef* txdma;
+    DMA_HandleTypeDef* rxdma;
     SPI_FirstBit FirstBit;
     SPI_DataSize DataSize;
+    SPI_TX_DMA SpiTxDma;
+    SPI_RX_DMA SpiRxDma;
     SPI_NSS NSS;
     SPI_BiDir BiDir;
     SPI_CRC CRC;
@@ -164,6 +182,8 @@ HAL_Status SPI_TransmitReceive(SPI_HandleTypeDef* hspi, uint8_t* pTxData, uint8_
 HAL_Status SPI_DeInit(SPI_HandleTypeDef* hspi);
 HAL_Status SPI_Transmit_IT(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size);
 HAL_Status SPI_Receive_IT(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size);
+HAL_Status SPI_TransmitDMA(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size);
+HAL_Status SPI_ReceiveDMA(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size);
 
 /*----------END FUNCTION PROTOTYPES------------*/
 
