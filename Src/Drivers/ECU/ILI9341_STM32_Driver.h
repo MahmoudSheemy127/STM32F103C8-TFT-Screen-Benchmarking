@@ -84,26 +84,26 @@
 #ifndef ILI9341_STM32_DRIVER_H
 #define ILI9341_STM32_DRIVER_H
 
-#include "stm32f7xx_hal.h"
+// #include "stm32f7xx_hal.h"
 
 
 #define ILI9341_SCREEN_HEIGHT 240 
 #define ILI9341_SCREEN_WIDTH 	320
 
-//SPI INSTANCE
-#define HSPI_INSTANCE							&hspi5
+// //SPI INSTANCE
+// #define HSPI_INSTANCE							&hspi5
 
-//CHIP SELECT PIN AND PORT, STANDARD GPIO
-#define LCD_CS_PORT								GPIOC
-#define LCD_CS_PIN								CS_Pin
+// //CHIP SELECT PIN AND PORT, STANDARD GPIO
+// #define LCD_CS_PORT								GPIOC
+// #define LCD_CS_PIN								CS_Pin
 
-//DATA COMMAND PIN AND PORT, STANDARD GPIO
-#define LCD_DC_PORT								GPIOC
-#define LCD_DC_PIN								DC_Pin
+// //DATA COMMAND PIN AND PORT, STANDARD GPIO
+// #define LCD_DC_PORT								GPIOC
+// #define LCD_DC_PIN								DC_Pin
 
-//RESET PIN AND PORT, STANDARD GPIO
-#define	LCD_RST_PORT							GPIOC
-#define	LCD_RST_PIN								RST_Pin
+// //RESET PIN AND PORT, STANDARD GPIO
+// #define	LCD_RST_PORT							GPIOC
+// #define	LCD_RST_PIN								RST_Pin
 
 
 #define BURST_MAX_SIZE 	500
@@ -141,16 +141,16 @@ GPIO_HandleTypeDef RST;
 GPIO_HandleTypeDef SCK;
 GPIO_HandleTypeDef SDA;
 
-typedef struct 
-{
-    /* data */
-    SPI_HandleTypeDef* hspi;
-    GPIO_HandleTypeDef* CS;
-    GPIO_HandleTypeDef* DC;
-    GPIO_HandleTypeDef* RST;
-    GPIO_HandleTypeDef* SCK;
-    GPIO_HandleTypeDef* SDA;
-}ILI9341_STM32_Driver;
+// typedef struct 
+// {
+//     /* data */
+//     SPI_HandleTypeDef* hspi;
+//     GPIO_HandleTypeDef* CS;
+//     GPIO_HandleTypeDef* DC;
+//     GPIO_HandleTypeDef* RST;
+//     GPIO_HandleTypeDef* SCK;
+//     GPIO_HandleTypeDef* SDA;
+// }ILI9341_STM32_Driver;
 
 
 //-----------------End Data types-----------------//

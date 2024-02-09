@@ -178,7 +178,7 @@ HAL_Status SPI_Init(SPI_HandleTypeDef* hspi)
  * @return HAL_Status 
  */
 
-HAL_Status SPI_Transmit(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size, uint32_t Timeout)
+HAL_Status SPI_Transmit(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size)
 {
     HAL_Status status = HAL_OKAY;
     if((NULL == hspi) || (NULL == pData))
@@ -227,7 +227,7 @@ HAL_Status SPI_Transmit(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size, 
  * @return HAL_Status 
  **/
 
-HAL_Status SPI_Receive(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size, uint32_t Timeout)
+HAL_Status SPI_Receive(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size)
 {
     HAL_Status status = HAL_OKAY;
     if((NULL == hspi) || (NULL == pData))

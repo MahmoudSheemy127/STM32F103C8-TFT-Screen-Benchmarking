@@ -84,6 +84,7 @@
 #include "Drivers/SPI/SPI.h"
 #include "Drivers/GPIO/GPIO.h"
 #include "Drivers/DMA/DMA.h"
+#include "CortexM3/SYSTICK_M3.h"
 #include "spi.h"
 #include "gpio.h"
 #include "ILI9341_STM32_Driver.h"
@@ -160,25 +161,34 @@ void ILI9341_SPI_Init(void)
 /*Send data (char) to LCD*/
 void ILI9341_SPI_Send(unsigned char SPI_Data)
 {
-HAL_SPI_Transmit(HSPI_INSTANCE, &SPI_Data, 1, 1);
+//HAL_SPI_Transmit(HSPI_INSTANCE, &SPI_Data, 1, 1);
+SPI_Transmit(&hspi1, &SPI_Data, 1);
 }
 
 /* Send command (char) to LCD */
 void ILI9341_Write_Command(uint8_t Command)
 {
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
-HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_RESET);	
-ILI9341_SPI_Send(Command);
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);		
+	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+	//HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_RESET);
+	GPIO_WritePin(&CS, GPIO_PIN_RESET);
+	GPIO_WritePin(&DC, GPIO_PIN_RESET);
+	ILI9341_SPI_Send(Command);
+	GPIO_WritePin(&CS, GPIO_PIN_SET);
+	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);		
 }
 
 /* Send Data (char) to LCD */
 void ILI9341_Write_Data(uint8_t Data)
 {
-HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);	
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
-ILI9341_SPI_Send(Data);	
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+	GPIO_WritePin(&CS, GPIO_PIN_RESET);
+	GPIO_WritePin(&DC, GPIO_PIN_SET);
+	ILI9341_SPI_Send(Data);
+	GPIO_WritePin(&CS, GPIO_PIN_SET);
+
+// HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);	
+// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+// ILI9341_SPI_Send(Data);	
+// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 }
 
 /* Set Address - Location block - to draw into */
@@ -202,11 +212,17 @@ ILI9341_Write_Command(0x2C);
 /*HARDWARE RESET*/
 void ILI9341_Reset(void)
 {
-HAL_GPIO_WritePin(LCD_RST_PORT, LCD_RST_PIN, GPIO_PIN_RESET);
-HAL_Delay(200);
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
-HAL_Delay(200);
-HAL_GPIO_WritePin(LCD_RST_PORT, LCD_RST_PIN, GPIO_PIN_SET);	
+	GPIO_WritePin(&RST, GPIO_PIN_RESET);
+	SYSTICK_DelayMs(200);
+	GPIO_WritePin(&CS, GPIO_PIN_RESET);
+	SYSTICK_DelayMs(200);
+	GPIO_WritePin(&RST, GPIO_PIN_SET);
+
+	// HAL_GPIO_WritePin(LCD_RST_PORT, LCD_RST_PIN, GPIO_PIN_RESET);
+	// HAL_Delay(200);
+	// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+	// HAL_Delay(200);
+	// HAL_GPIO_WritePin(LCD_RST_PORT, LCD_RST_PIN, GPIO_PIN_SET);	
 }
 
 /*Ser rotation of the screen - changes x0 and y0*/
@@ -216,7 +232,7 @@ void ILI9341_Set_Rotation(uint8_t Rotation)
 uint8_t screen_rotation = Rotation;
 
 ILI9341_Write_Command(0x36);
-HAL_Delay(1);
+SYSTICK_DelayMs(1);
 	
 switch(screen_rotation) 
 	{
@@ -249,7 +265,9 @@ switch(screen_rotation)
 /*Enable LCD display*/
 void ILI9341_Enable(void)
 {
-HAL_GPIO_WritePin(LCD_RST_PORT, LCD_RST_PIN, GPIO_PIN_SET);
+// HAL_GPIO_WritePin(LCD_RST_PORT, LCD_RST_PIN, GPIO_PIN_SET);
+	GPIO_WritePin(&RST, GPIO_PIN_SET);
+
 }
 
 /*Initialize LCD display*/
@@ -262,7 +280,7 @@ ILI9341_Reset();
 
 //SOFTWARE RESET
 ILI9341_Write_Command(0x01);
-HAL_Delay(1000);
+SYSTICK_DelayMs(1000);
 	
 //POWER CONTROL A
 ILI9341_Write_Command(0xCB);
@@ -382,7 +400,7 @@ ILI9341_Write_Data(0x0F);
 
 //EXIT SLEEP
 ILI9341_Write_Command(0x11);
-HAL_Delay(120);
+SYSTICK_DelayMs(120);
 
 //TURN ON DISPLAY
 ILI9341_Write_Command(0x29);
@@ -391,16 +409,22 @@ ILI9341_Write_Command(0x29);
 ILI9341_Set_Rotation(SCREEN_VERTICAL_1);
 }
 
+
 //INTERNAL FUNCTION OF LIBRARY, USAGE NOT RECOMENDED, USE Draw_Pixel INSTEAD
 /*Sends single pixel colour information to LCD*/
 void ILI9341_Draw_Colour(uint16_t Colour)
 {
 //SENDS COLOUR
 unsigned char TempBuffer[2] = {Colour>>8, Colour};	
-HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);	
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
-HAL_SPI_Transmit(HSPI_INSTANCE, TempBuffer, 2, 1);	
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+GPIO_WritePin(&DC, GPIO_PIN_SET);
+GPIO_WritePin(&CS, GPIO_PIN_RESET);
+SPI_Transmit(&hspi1, TempBuffer, 2);
+GPIO_WritePin(&CS, GPIO_PIN_SET);
+	
+// HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);
+// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+// HAL_SPI_Transmit(HSPI_INSTANCE, TempBuffer, 2, 1);	
+// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 }
 
 //INTERNAL FUNCTION OF LIBRARY
@@ -418,8 +442,10 @@ else
 	Buffer_Size = BURST_MAX_SIZE;
 }
 	
-HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);	
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+GPIO_WritePin(&DC, GPIO_PIN_SET);
+GPIO_WritePin(&CS, GPIO_PIN_RESET);
+// HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);	
+// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
 
 unsigned char chifted = 	Colour>>8;;
 unsigned char burst_buffer[Buffer_Size];
@@ -437,14 +463,17 @@ if(Sending_in_Block != 0)
 {
 	for(uint32_t j = 0; j < (Sending_in_Block); j++)
 		{
-		HAL_SPI_Transmit(HSPI_INSTANCE, (unsigned char *)burst_buffer, Buffer_Size, 10);	
+		SPI_Transmit(&hspi1, (unsigned char *)burst_buffer, Buffer_Size);
+		//HAL_SPI_Transmit(HSPI_INSTANCE, (unsigned char *)burst_buffer, Buffer_Size, 10);	
 		}
 }
 
 //REMAINDER!
-HAL_SPI_Transmit(HSPI_INSTANCE, (unsigned char *)burst_buffer, Remainder_from_block, 10);	
-	
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+SPI_Transmit(&hspi1, (unsigned char *)burst_buffer, Remainder_from_block);
+//HAL_SPI_Transmit(HSPI_INSTANCE, (unsigned char *)burst_buffer, Remainder_from_block, 10);	
+
+GPIO_WritePin(&CS, GPIO_PIN_SET);
+//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 }
 
 //FILL THE ENTIRE SCREEN WITH SELECTED COLOUR (either #define-d ones or custom 16bit)
@@ -466,43 +495,76 @@ void ILI9341_Draw_Pixel(uint16_t X,uint16_t Y,uint16_t Colour)
 if((X >=LCD_WIDTH) || (Y >=LCD_HEIGHT)) return;	//OUT OF BOUNDS!
 	
 //ADDRESS
-HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_RESET);	
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+GPIO_WritePin(&DC, GPIO_PIN_RESET);
+GPIO_WritePin(&CS, GPIO_PIN_RESET);
 ILI9341_SPI_Send(0x2A);
-HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);	
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);		
+GPIO_WritePin(&DC, GPIO_PIN_SET);
+GPIO_WritePin(&CS, GPIO_PIN_SET);
+
+// HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_RESET);	
+// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+// ILI9341_SPI_Send(0x2A);
+// HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);	
+// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);		
 
 //XDATA
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);	
+GPIO_WritePin(&CS, GPIO_PIN_RESET);
 unsigned char Temp_Buffer[4] = {X>>8,X, (X+1)>>8, (X+1)};
-HAL_SPI_Transmit(HSPI_INSTANCE, Temp_Buffer, 4, 1);
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+SPI_Transmit(&hspi1, Temp_Buffer, 4);
+GPIO_WritePin(&CS, GPIO_PIN_SET);
+
+// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);	
+// unsigned char Temp_Buffer[4] = {X>>8,X, (X+1)>>8, (X+1)};
+// HAL_SPI_Transmit(HSPI_INSTANCE, Temp_Buffer, 4, 1);
+// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 
 //ADDRESS
-HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_RESET);	
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);	
+GPIO_WritePin(&DC, GPIO_PIN_RESET);
+GPIO_WritePin(&CS, GPIO_PIN_RESET);
 ILI9341_SPI_Send(0x2B);
-HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);			
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);			
+GPIO_WritePin(&DC, GPIO_PIN_SET);
+GPIO_WritePin(&CS, GPIO_PIN_SET);
+
+// HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_RESET);	
+// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);	
+// ILI9341_SPI_Send(0x2B);
+// HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);			
+// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);			
 
 //YDATA
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+GPIO_WritePin(&CS, GPIO_PIN_RESET);
 unsigned char Temp_Buffer1[4] = {Y>>8,Y, (Y+1)>>8, (Y+1)};
-HAL_SPI_Transmit(HSPI_INSTANCE, Temp_Buffer1, 4, 1);
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+SPI_Transmit(&hspi1, Temp_Buffer1, 4);
+GPIO_WritePin(&CS, GPIO_PIN_SET);
+
+// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+// unsigned char Temp_Buffer1[4] = {Y>>8,Y, (Y+1)>>8, (Y+1)};
+// HAL_SPI_Transmit(HSPI_INSTANCE, Temp_Buffer1, 4, 1);
+// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 
 //ADDRESS	
-HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_RESET);	
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);	
+GPIO_WritePin(&DC, GPIO_PIN_RESET);
+GPIO_WritePin(&CS, GPIO_PIN_RESET);
 ILI9341_SPI_Send(0x2C);
-HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);			
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);			
+GPIO_WritePin(&DC, GPIO_PIN_SET);
+GPIO_WritePin(&CS, GPIO_PIN_SET);
+
+// HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_RESET);	
+// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);	
+// ILI9341_SPI_Send(0x2C);
+// HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);			
+// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);			
 
 //COLOUR	
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+GPIO_WritePin(&CS, GPIO_PIN_RESET);
 unsigned char Temp_Buffer2[2] = {Colour>>8, Colour};
-HAL_SPI_Transmit(HSPI_INSTANCE, Temp_Buffer2, 2, 1);
-HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+SPI_Transmit(&hspi1, Temp_Buffer2, 2);
+GPIO_WritePin(&CS, GPIO_PIN_SET);
+
+// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+// unsigned char Temp_Buffer2[2] = {Colour>>8, Colour};
+// HAL_SPI_Transmit(HSPI_INSTANCE, Temp_Buffer2, 2, 1);
+// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 	
 }
 

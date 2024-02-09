@@ -14,6 +14,7 @@
 #include "Drivers/DMA/DMA.h"
 #include "Drivers/SPI/SPI.h"
 #include "CortexM3/SYSTICK_M3.h"
+#include "Drivers/ECU/ILI9341_STM32_Driver.h"
 
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
@@ -54,14 +55,21 @@ void HAL_Init();
 
 int main(void)
 {
+	ILI9341_Init();
 
-	HAL_Init();
+	//HAL_Init();
+
 	/* Loop forever */
-	NVIC_SetEnableInterrupt(NVIC_IRQ_DMA1_Channel4_IRQHandler);
-	SPI_ReceiveDMA(&spi2, receiveArray,5);
-	SPI_TransmitDMA(&spi1, sendArray, 5);
+	// NVIC_SetEnableInterrupt(NVIC_IRQ_DMA1_Channel4_IRQHandler);
+	// SPI_ReceiveDMA(&spi2, receiveArray,5);
+	// SPI_TransmitDMA(&spi1, sendArray, 5);
 	while(1)
 	{
+		ILI9341_Fill_Screen(WHITE);
+		ILI9341_Set_Rotation(SCREEN_HORIZONTAL_2);
+		ILI9341_Draw_Text("FPS TEST, 40 loop 2 screens", 10, 10, BLACK, 1, WHITE);
+		SYSTICK_DelayMs(2000);
+		ILI9341_Fill_Screen(WHITE);
 		//SPI_Transmit(&spi1, sendArray, 2, 1000);
 		//SYSTICK_DelayMs(500);
 
