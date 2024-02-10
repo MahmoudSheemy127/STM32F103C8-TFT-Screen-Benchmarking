@@ -85,8 +85,8 @@
 #include "Drivers/GPIO/GPIO.h"
 #include "Drivers/DMA/DMA.h"
 #include "CortexM3/SYSTICK_M3.h"
-#include "spi.h"
-#include "gpio.h"
+// #include "spi.h"
+// #include "gpio.h"
 #include "ILI9341_STM32_Driver.h"
 
 /* Global Variables ------------------------------------------------------------------*/
@@ -104,7 +104,7 @@ void ILI9341_SPI_Init(void)
 	hspi1.CPHA = SPI_CPHA_1EDGE;
 	hspi1.BaudRate = SPI_BAUDRATE_DIV2;
 	hspi1.NSS = SPI_NSS_DISABLE;
-	hspi1.BiDir = SPI_BIDIR_ENABLE;
+	hspi1.BiDir = SPI_BIDIR_DISABLE;
 	hspi1.CRC = SPI_CRC_DISABLE;
 	hspi1.FirstBit = SPI_LSB_FIRST;
 	hspi1.CRCPolynomial = SPI_CRC_POLYNOMIAL_7BIT;
@@ -118,7 +118,7 @@ void ILI9341_SPI_Init(void)
 	SDA.GPIO_Pin = MOSI_SPI1;
 	SDA.GPIO_Mode = GPIO_MODE_OUTPUT_2MHZ;
 	SDA.GPIO_CNF = GPIO_CNF_OUTPUT_ALTFN_PUSH_PULL;
-	GPIO_Init(&mosi1);
+	GPIO_Init(&SDA);
 
 	/* Init SCK */
 	SCK.GPIO_TypeDef = PORT_SPI1;
@@ -131,27 +131,27 @@ void ILI9341_SPI_Init(void)
 	CS.GPIO_TypeDef = PORT_SPI1;
 	CS.GPIO_Pin = GPIO_PIN_3;
 	CS.GPIO_Mode = GPIO_MODE_OUTPUT_2MHZ;
-	CS.GPIO_CNF = GPIO_CNF_OUTPUT_ALTFN_PUSH_PULL;
+	CS.GPIO_CNF = GPIO_CNF_OUTPUT_PUSH_PULL;
 	GPIO_Init(&CS);
 
 	/* Init DC */
 	DC.GPIO_TypeDef = PORT_SPI1;
 	DC.GPIO_Pin = GPIO_PIN_2;
 	DC.GPIO_Mode = GPIO_MODE_OUTPUT_2MHZ;
-	DC.GPIO_CNF = GPIO_CNF_OUTPUT_ALTFN_PUSH_PULL;
+	DC.GPIO_CNF = GPIO_CNF_OUTPUT_PUSH_PULL;
 	GPIO_Init(&DC);
 
 
 	RST.GPIO_TypeDef = PORT_SPI1;
 	RST.GPIO_Pin = GPIO_PIN_8;
 	RST.GPIO_Mode = GPIO_MODE_OUTPUT_2MHZ;
-	RST.GPIO_CNF = GPIO_CNF_OUTPUT_ALTFN_PUSH_PULL;
+	RST.GPIO_CNF = GPIO_CNF_OUTPUT_PUSH_PULL;
 	GPIO_Init(&RST);
 
-	GPIO_WritePin(&CS, GPIO_PIN_RESET);
 
 	/* Init SPI */
 	SPI_Init(&hspi1);
+	GPIO_WritePin(&CS, GPIO_PIN_RESET);
 
 // MX_SPI5_Init();																							//SPI INIT
 // MX_GPIO_Init();																							//GPIO INIT
@@ -159,7 +159,7 @@ void ILI9341_SPI_Init(void)
 }
 
 /*Send data (char) to LCD*/
-void ILI9341_SPI_Send(unsigned char SPI_Data)
+void ILI9341_SPI_Send(uint8_t SPI_Data)
 {
 //HAL_SPI_Transmit(HSPI_INSTANCE, &SPI_Data, 1, 1);
 SPI_Transmit(&hspi1, &SPI_Data, 1);
@@ -274,8 +274,8 @@ void ILI9341_Enable(void)
 void ILI9341_Init(void)
 {
 
-ILI9341_Enable();
 ILI9341_SPI_Init();
+ILI9341_Enable();
 ILI9341_Reset();
 
 //SOFTWARE RESET

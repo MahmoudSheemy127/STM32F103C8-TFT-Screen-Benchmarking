@@ -158,7 +158,7 @@ GPIO_HandleTypeDef SDA;
 
 
 void ILI9341_SPI_Init(void);
-void ILI9341_SPI_Send(unsigned char SPI_Data);
+void ILI9341_SPI_Send(uint8_t SPI_Data);
 void ILI9341_Write_Command(uint8_t Command);
 void ILI9341_Write_Data(uint8_t Data);
 void ILI9341_Set_Address(uint16_t X1, uint16_t Y1, uint16_t X2, uint16_t Y2);

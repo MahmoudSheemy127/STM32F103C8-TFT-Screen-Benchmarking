@@ -4,6 +4,7 @@
 
 /*----------START INCLUDES----------*/
 #include "Drivers/Common/Common.h"
+#include "Drivers/DMA/DMA.h"
 #include "Std_Types.h"
 /*----------END INCLUDES------------*/
 
