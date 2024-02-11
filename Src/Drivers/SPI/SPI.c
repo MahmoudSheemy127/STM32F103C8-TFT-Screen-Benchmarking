@@ -1,4 +1,4 @@
-#include "Drivers/DMA/DMA.h"
+
 #include "Drivers/SPI/SPI.h"
 
 
@@ -39,6 +39,19 @@ HAL_Status SPI_Init(SPI_HandleTypeDef* hspi)
         else if(hspi->Mode == SPI_MODE_SLAVE)
         {
             CLR_BIT(hspi->Instance->CR1, SPI_CR1_MSTR);
+        }
+        else
+        {
+            status = HAL_ERROR;
+        }
+        /* Set SPI Bi-Directional mode */
+        if(hspi->BiDir == SPI_BIDIR_ENABLE)
+        {
+            SET_BIT(hspi->Instance->CR1, SPI_CR1_BIDIMODE);
+        }
+        else if(hspi->BiDir == SPI_BIDIR_DISABLE)
+        {
+            CLR_BIT(hspi->Instance->CR1, SPI_CR1_BIDIMODE);
         }
         else
         {
@@ -165,7 +178,7 @@ HAL_Status SPI_Init(SPI_HandleTypeDef* hspi)
  * @return HAL_Status 
  */
 
-HAL_Status SPI_Transmit(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size, uint32_t Timeout)
+HAL_Status SPI_Transmit(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size)
 {
     HAL_Status status = HAL_OKAY;
     if((NULL == hspi) || (NULL == pData))
@@ -214,7 +227,7 @@ HAL_Status SPI_Transmit(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size, 
  * @return HAL_Status 
  **/
 
-HAL_Status SPI_Receive(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size, uint32_t Timeout)
+HAL_Status SPI_Receive(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size)
 {
     HAL_Status status = HAL_OKAY;
     if((NULL == hspi) || (NULL == pData))

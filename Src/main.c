@@ -14,6 +14,7 @@
 #include "Drivers/DMA/DMA.h"
 #include "Drivers/SPI/SPI.h"
 #include "CortexM3/SYSTICK_M3.h"
+#include "Drivers/ECU/ILI9341_STM32_Driver.h"
 
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
@@ -52,17 +53,69 @@ void DMA1_1_CallbackFn();
 
 void HAL_Init();
 
+void transmit(uint8_t cmd);
+
 int main(void)
 {
+	/* Init Systick */
+//	SYSTICK_Init();
+//	/* enable RCC clock */
+//	_RCC_GPIOA_ENABLE();
+//	_RCC_GPIOB_ENABLE();
+//	_RCC_SPI1_ENABLE();
+//	_RCC_DMA1_ENABLE();
 
 	HAL_Init();
+	ILI9341_Init();
+
+	uint8_t data = 0x06;
 	/* Loop forever */
-	NVIC_SetEnableInterrupt(NVIC_IRQ_DMA1_Channel4_IRQHandler);
-	SPI_ReceiveDMA(&spi2, receiveArray,5);
-	SPI_TransmitDMA(&spi1, sendArray, 5);
+	// NVIC_SetEnableInterrupt(NVIC_IRQ_DMA1_Channel4_IRQHandler);
+	// SPI_ReceiveDMA(&spi2, receiveArray,5);
+	// SPI_TransmitDMA(&spi1, sendArray, 5);
 	while(1)
 	{
-		//SPI_Transmit(&spi1, sendArray, 2, 1000);
+		// ILI9341_Fill_Screen(BLACK);
+		/* Interlacing demo */
+
+		// ILI9341_Draw_Rectangle(0,0,128,20,RED);
+		// ILI9341_Draw_Rectangle(0,40,128,20,RED);
+		// ILI9341_Draw_Rectangle(0,80,128,20,RED);
+		// ILI9341_Draw_Rectangle(0,120,128,20,RED);
+		// ILI9341_Draw_Rectangle(0,20,128,20,BLUE);
+		// ILI9341_Draw_Rectangle(0,60,128,20,BLUE);
+		// ILI9341_Draw_Rectangle(0,100,128,20,BLUE);
+		// ILI9341_Draw_Rectangle(0,140,128,20,BLUE);
+		// ILI9341_Draw_Rectangle(0,0,128,160,RED);
+		// ILI9341_Fill_Screen(BLACK);
+		// SYSTICK_DelayMs(200);
+		// ILI9341_Fill_Screen(RED);
+		// SYSTICK_DelayMs(200);
+		// ILI9341_Fill_Screen(GREEN);
+		// SYSTICK_DelayMs(200);
+		// ILI9341_Fill_Screen(WHITE);
+		// SYSTICK_DelayMs(200);
+
+		ILI9341_Draw_Rectangle(0,0,128,160,BLUE);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Rectangle(0,0,128,160,BLACK);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
+		SYSTICK_DelayMs(200);
+
+		// ILI9341_Fill_Screen(WHITE);
+		// SYSTICK_DelayMs(2000);
+		// ILI9341_Set_Rotation(SCREEN_HORIZONTAL_2);
+		// //ILI9341_Draw_Text("FPS TEST, 40 loop 2 screens", 10, 10, BLACK, 1, WHITE);
+		// SYSTICK_DelayMs(2000);
+		// ILI9341_Fill_Screen(BLACK);
+		// ILI9341_Draw_Rectangle(0,0,50,50,RED);
+
+		// SPI_Transmit(&spi1, &data, 1);
+		// transmit(0xC6);
+		// transmit(0x3F);
+		// transmit(0xAB);
+		// data++;
 		//SYSTICK_DelayMs(500);
 
 		// blinkLed();
@@ -99,77 +152,77 @@ void Clock_Config()
 
 void HAL_Init()
 {
-	/* Init Systick */
-	SYSTICK_Init();
-	/* enable RCC clock */
-	_RCC_GPIOA_ENABLE();
-	_RCC_GPIOB_ENABLE();
-	_RCC_SPI1_ENABLE();
-	_RCC_DMA1_ENABLE();
+	 /* Init Systick */
+	 SYSTICK_Init();
+	 /* enable RCC clock */
+	 _RCC_GPIOA_ENABLE();
+	 _RCC_GPIOB_ENABLE();
+	 _RCC_SPI1_ENABLE();
+	 _RCC_DMA1_ENABLE();
 
-	/* Init SPI 1 as master */
-	spi1.Instance = SPI1;
-	spi1.Mode = SPI_MODE_MASTER;
-	spi1.DataSize = SPI_DATASIZE_8BIT;
-	spi1.CPOL = SPI_CPOL_LOW;
-	spi1.CPHA = SPI_CPHA_1EDGE;
-	spi1.BaudRate = SPI_BAUDRATE_DIV2;
-	spi1.NSS = SPI_NSS_DISABLE;
-	spi1.BiDir = SPI_BIDIR_DISABLE;
-	spi1.CRC = SPI_CRC_DISABLE;
-	spi1.FirstBit = SPI_LSB_FIRST;
-	spi1.CRCPolynomial = SPI_CRC_POLYNOMIAL_7BIT;
-	spi1.CRCDir = SPI_CRC_TX;
-	spi1.SpiTxDma = SPI_TX_DMA_ENABLE;
-	spi1.SpiRxDma = SPI_RX_DMA_DISABLE;
-
-
-	/* Init MOSI,MISO,SCK,NSS pin configs */
-	/* Init MOSI pin */
-	mosi1.GPIO_TypeDef = PORT_SPI1;
-	mosi1.GPIO_Pin = MOSI_SPI1;
-	mosi1.GPIO_Mode = GPIO_MODE_OUTPUT_2MHZ;
-	mosi1.GPIO_CNF = GPIO_CNF_OUTPUT_ALTFN_PUSH_PULL;
-	GPIO_Init(&mosi1);
-
-	/* Init MISO pin */
-	miso1.GPIO_TypeDef = PORT_SPI1;
-	miso1.GPIO_Pin = MISO_SPI1;
-	miso1.GPIO_Mode = GPIO_MODE_INPUT;
-	miso1.GPIO_CNF = GPIO_CNF_INPUT_FLOATING;
-	GPIO_Init(&miso1);
-
-	/* Init SCK pin */
-	sck1.GPIO_TypeDef = PORT_SPI1;
-	sck1.GPIO_Pin = SCK_SPI1;
-	sck1.GPIO_Mode = GPIO_MODE_OUTPUT_2MHZ;
-	sck1.GPIO_CNF = GPIO_CNF_OUTPUT_ALTFN_PUSH_PULL;
-	GPIO_Init(&sck1);
-
-	/* Init NSS pin */
-	nss1.GPIO_TypeDef = PORT_SPI1;
-	nss1.GPIO_Pin = NSS_SPI1;
-	nss1.GPIO_Mode = GPIO_MODE_OUTPUT_2MHZ;
-	nss1.GPIO_CNF = GPIO_CNF_OUTPUT_ALTFN_PUSH_PULL;
-	GPIO_Init(&nss1);
+	//  /* Init SPI 1 as master */
+	//  spi1.Instance = SPI1;
+	//  spi1.Mode = SPI_MODE_MASTER;
+	//  spi1.DataSize = SPI_DATASIZE_8BIT;
+	//  spi1.CPOL = SPI_CPOL_LOW;
+	//  spi1.CPHA = SPI_CPHA_1EDGE;
+	//  spi1.BaudRate = SPI_BAUDRATE_DIV2;
+	//  spi1.NSS = SPI_NSS_DISABLE;
+	//  spi1.BiDir = SPI_BIDIR_DISABLE;
+	//  spi1.CRC = SPI_CRC_DISABLE;
+	//  spi1.FirstBit = SPI_LSB_FIRST;
+	//  spi1.CRCPolynomial = SPI_CRC_POLYNOMIAL_7BIT;
+	//  spi1.CRCDir = SPI_CRC_TX;
+	//  spi1.SpiTxDma = SPI_TX_DMA_ENABLE;
+	//  spi1.SpiRxDma = SPI_RX_DMA_DISABLE;
 
 
-	/*Init DMA channels */
-	spiTxdma.dma_TypeDef = DMA1_3;
-	spiTxdma.dma_Mem2Mem = DMA_MEM2MEM_DISABLE;
-	spiTxdma.dma_Mode = DMA_NON_CIRCULAR_MODE;
-	spiTxdma.dma_Direction = DMA_READ_FROM_MEMORY;
-	spiTxdma.dma_MemSize = DMA_MEM_SIZE_8_BITS;
-	spiTxdma.dma_PeriphSize = DMA_PERIPH_SIZE_8_BITS;
-	spiTxdma.dma_MemIncMode = DMA_MEM_INC_ENABLE;
-	spiTxdma.dma_PeriphIncMode = DMA_PERIPH_INC_DISABLE;
-	spiTxdma.dma_Interrupt = DMA_INTERRUPT_DISABLE;
+	//  /* Init MOSI,MISO,SCK,NSS pin configs */
+	//  /* Init MOSI pin */
+	//  mosi1.GPIO_TypeDef = PORT_SPI1;
+	//  mosi1.GPIO_Pin = MOSI_SPI1;
+	//  mosi1.GPIO_Mode = GPIO_MODE_OUTPUT_2MHZ;
+	//  mosi1.GPIO_CNF = GPIO_CNF_OUTPUT_ALTFN_PUSH_PULL;
+	//  GPIO_Init(&mosi1);
 
-	spi1.txdma = &spiTxdma;
+	//  /* Init MISO pin */
+	//  miso1.GPIO_TypeDef = PORT_SPI1;
+	//  miso1.GPIO_Pin = MISO_SPI1;
+	//  miso1.GPIO_Mode = GPIO_MODE_INPUT;
+	//  miso1.GPIO_CNF = GPIO_CNF_INPUT_FLOATING;
+	//  GPIO_Init(&miso1);
 
-	DMA_Init(spi1.txdma);
+	//  /* Init SCK pin */
+	//  sck1.GPIO_TypeDef = PORT_SPI1;
+	//  sck1.GPIO_Pin = SCK_SPI1;
+	//  sck1.GPIO_Mode = GPIO_MODE_OUTPUT_2MHZ;
+	//  sck1.GPIO_CNF = GPIO_CNF_OUTPUT_ALTFN_PUSH_PULL;
+	//  GPIO_Init(&sck1);
 
-	SPI_Init(&spi1);
+	//  /* Init NSS pin */
+	//  nss1.GPIO_TypeDef = PORT_SPI1;
+	//  nss1.GPIO_Pin = NSS_SPI1;
+	//  nss1.GPIO_Mode = GPIO_MODE_OUTPUT_2MHZ;
+	//  nss1.GPIO_CNF = GPIO_CNF_OUTPUT_ALTFN_PUSH_PULL;
+	//  GPIO_Init(&nss1);
+
+
+	//  /*Init DMA channels */
+	//  spiTxdma.dma_TypeDef = DMA1_3;
+	//  spiTxdma.dma_Mem2Mem = DMA_MEM2MEM_DISABLE;
+	//  spiTxdma.dma_Mode = DMA_NON_CIRCULAR_MODE;
+	//  spiTxdma.dma_Direction = DMA_READ_FROM_MEMORY;
+	//  spiTxdma.dma_MemSize = DMA_MEM_SIZE_8_BITS;
+	//  spiTxdma.dma_PeriphSize = DMA_PERIPH_SIZE_8_BITS;
+	//  spiTxdma.dma_MemIncMode = DMA_MEM_INC_ENABLE;
+	//  spiTxdma.dma_PeriphIncMode = DMA_PERIPH_INC_DISABLE;
+	//  spiTxdma.dma_Interrupt = DMA_INTERRUPT_DISABLE;
+
+	//  spi1.txdma = &spiTxdma;
+
+	//  DMA_Init(spi1.txdma);
+
+	//  SPI_Init(&spi1);
 
 	/* Init SPI 2 as slave */
 	_RCC_SPI2_ENABLE();
@@ -230,7 +283,7 @@ void HAL_Init()
 
 	spi2.rxdma = &spiRxdma;
 
-	DMA_Init(spi2.rxdma);
+	//DMA_Init(spi2.rxdma);
 
 
 	SPI_Init(&spi2);
@@ -259,6 +312,11 @@ void WWDG_IRQHandler()
 	GPIOA->ODR |= (1<<0);
 }
 
+
+void transmit(unsigned char cmd)
+{
+	SPI_Transmit(&spi1, &cmd, 1);
+}
 
 void DMA1_1_CallbackFn()
 {

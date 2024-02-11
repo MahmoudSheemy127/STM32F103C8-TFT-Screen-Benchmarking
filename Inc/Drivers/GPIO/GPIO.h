@@ -98,7 +98,7 @@ typedef struct{
 
 /*---------------START FUNCTIONS-------------------*/
 HAL_Status GPIO_Init(GPIO_HandleTypeDef* gpio_handle);
-HAL_Status GPIO_WritePin(GPIO_HandleTypeDef* gpio_handle);
+HAL_Status GPIO_WritePin(GPIO_HandleTypeDef* gpio_handle, GPIO_PinState pin_state);
 uint8_t GPIO_ReadPin(GPIO_HandleTypeDef* gpio_handle);
 HAL_Status GPIO_TogglePin(GPIO_HandleTypeDef* gpio_handle);
 /*---------------END FUNCTIONS---------------------*/

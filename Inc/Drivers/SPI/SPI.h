@@ -4,6 +4,7 @@
 
 /*----------START INCLUDES----------*/
 #include "Drivers/Common/Common.h"
+#include "Drivers/DMA/DMA.h"
 #include "Std_Types.h"
 /*----------END INCLUDES------------*/
 
@@ -176,8 +177,8 @@ typedef struct{
 
 /*----------START FUNCTION PROTOTYPES----------*/
 HAL_Status SPI_Init(SPI_HandleTypeDef* hspi);
-HAL_Status SPI_Transmit(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size, uint32_t Timeout);
-HAL_Status SPI_Receive(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size, uint32_t Timeout);
+HAL_Status SPI_Transmit(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size);
+HAL_Status SPI_Receive(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size);
 HAL_Status SPI_TransmitReceive(SPI_HandleTypeDef* hspi, uint8_t* pTxData, uint8_t* pRxData, uint32_t Size, uint32_t Timeout);
 HAL_Status SPI_DeInit(SPI_HandleTypeDef* hspi);
 HAL_Status SPI_Transmit_IT(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Size);

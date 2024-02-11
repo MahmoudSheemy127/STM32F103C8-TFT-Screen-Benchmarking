@@ -23,6 +23,7 @@ OBJCOPY_BIN :=
 SUBDIRS := \
 Src/CortexM3 \
 Src/Drivers/DMA \
+Src/Drivers/ECU \
 Src/Drivers/GPIO \
 Src/Drivers/RCC \
 Src/Drivers/SPI \
