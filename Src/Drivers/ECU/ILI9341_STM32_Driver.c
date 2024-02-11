@@ -148,6 +148,20 @@ void ILI9341_SPI_Init(void)
 	RST.GPIO_CNF = GPIO_CNF_OUTPUT_PUSH_PULL;
 	GPIO_Init(&RST);
 
+	/*Init DMA channels */
+	spiTxdma.dma_TypeDef = DMA1_3;
+	spiTxdma.dma_Mem2Mem = DMA_MEM2MEM_DISABLE;
+	spiTxdma.dma_Mode = DMA_NON_CIRCULAR_MODE;
+	spiTxdma.dma_Direction = DMA_READ_FROM_MEMORY;
+	spiTxdma.dma_MemSize = DMA_MEM_SIZE_8_BITS;
+	spiTxdma.dma_PeriphSize = DMA_PERIPH_SIZE_8_BITS;
+	spiTxdma.dma_MemIncMode = DMA_MEM_INC_ENABLE;
+	spiTxdma.dma_PeriphIncMode = DMA_PERIPH_INC_DISABLE;
+	spiTxdma.dma_Interrupt = DMA_INTERRUPT_DISABLE;
+
+	hspi1.txdma = &spiTxdma;
+
+	DMA_Init(hspi1.txdma);
 
 	/* Init SPI */
 	SPI_Init(&hspi1);
@@ -463,13 +477,17 @@ if(Sending_in_Block != 0)
 {
 	for(uint32_t j = 0; j < (Sending_in_Block); j++)
 		{
-		SPI_Transmit(&hspi1, (unsigned char *)burst_buffer, Buffer_Size);
+		SPI_TransmitDMA(&hspi1, (unsigned char *)burst_buffer, Buffer_Size);
+		SYSTICK_DelayMs(1);
+		//SPI_Transmit(&hspi1, (unsigned char *)burst_buffer, Buffer_Size);
 		//HAL_SPI_Transmit(HSPI_INSTANCE, (unsigned char *)burst_buffer, Buffer_Size, 10);	
 		}
 }
 
 //REMAINDER!
-SPI_Transmit(&hspi1, (unsigned char *)burst_buffer, Remainder_from_block);
+SPI_TransmitDMA(&hspi1, (unsigned char *)burst_buffer, Remainder_from_block);
+SYSTICK_DelayMs(1);
+//SPI_Transmit(&hspi1, (unsigned char *)burst_buffer, Remainder_from_block);
 //HAL_SPI_Transmit(HSPI_INSTANCE, (unsigned char *)burst_buffer, Remainder_from_block, 10);	
 
 GPIO_WritePin(&CS, GPIO_PIN_SET);
@@ -480,7 +498,7 @@ GPIO_WritePin(&CS, GPIO_PIN_SET);
 /*Sets address (entire screen) and Sends Height*Width ammount of colour information to LCD*/
 void ILI9341_Fill_Screen(uint16_t Colour)
 {
-ILI9341_Set_Address(0,0,LCD_WIDTH,LCD_HEIGHT);	
+ILI9341_Set_Address(0,0,LCD_WIDTH-1,LCD_HEIGHT-1);	
 ILI9341_Draw_Colour_Burst(Colour, LCD_WIDTH*LCD_HEIGHT);	
 }
 

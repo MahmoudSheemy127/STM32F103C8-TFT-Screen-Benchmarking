@@ -87,8 +87,8 @@
 // #include "stm32f7xx_hal.h"
 
 
-#define ILI9341_SCREEN_HEIGHT 240 
-#define ILI9341_SCREEN_WIDTH 	320
+#define ILI9341_SCREEN_HEIGHT   160 
+#define ILI9341_SCREEN_WIDTH 	128
 
 // //SPI INSTANCE
 // #define HSPI_INSTANCE							&hspi5
@@ -135,6 +135,7 @@
 
 //-----------------Start Data types-----------------//
 SPI_HandleTypeDef hspi1;
+DMA_HandleTypeDef spiTxdma;
 GPIO_HandleTypeDef CS;
 GPIO_HandleTypeDef DC;
 GPIO_HandleTypeDef RST;

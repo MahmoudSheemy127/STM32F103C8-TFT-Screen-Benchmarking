@@ -75,14 +75,42 @@ int main(void)
 	// SPI_TransmitDMA(&spi1, sendArray, 5);
 	while(1)
 	{
-		ILI9341_Fill_Screen(BLACK);
-		ILI9341_Fill_Screen(WHITE);
-		ILI9341_Set_Rotation(SCREEN_HORIZONTAL_2);
-		//ILI9341_Draw_Text("FPS TEST, 40 loop 2 screens", 10, 10, BLACK, 1, WHITE);
-		SYSTICK_DelayMs(2000);
-		ILI9341_Fill_Screen(BLACK);
-		ILI9341_Draw_Rectangle(0,0,50,50,RED);
-		SYSTICK_DelayMs(2000);
+		// ILI9341_Fill_Screen(BLACK);
+		/* Interlacing demo */
+
+		// ILI9341_Draw_Rectangle(0,0,128,20,RED);
+		// ILI9341_Draw_Rectangle(0,40,128,20,RED);
+		// ILI9341_Draw_Rectangle(0,80,128,20,RED);
+		// ILI9341_Draw_Rectangle(0,120,128,20,RED);
+		// ILI9341_Draw_Rectangle(0,20,128,20,BLUE);
+		// ILI9341_Draw_Rectangle(0,60,128,20,BLUE);
+		// ILI9341_Draw_Rectangle(0,100,128,20,BLUE);
+		// ILI9341_Draw_Rectangle(0,140,128,20,BLUE);
+		// ILI9341_Draw_Rectangle(0,0,128,160,RED);
+		// ILI9341_Fill_Screen(BLACK);
+		// SYSTICK_DelayMs(200);
+		// ILI9341_Fill_Screen(RED);
+		// SYSTICK_DelayMs(200);
+		// ILI9341_Fill_Screen(GREEN);
+		// SYSTICK_DelayMs(200);
+		// ILI9341_Fill_Screen(WHITE);
+		// SYSTICK_DelayMs(200);
+
+		ILI9341_Draw_Rectangle(0,0,128,160,BLUE);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Rectangle(0,0,128,160,BLACK);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
+		SYSTICK_DelayMs(200);
+
+		// ILI9341_Fill_Screen(WHITE);
+		// SYSTICK_DelayMs(2000);
+		// ILI9341_Set_Rotation(SCREEN_HORIZONTAL_2);
+		// //ILI9341_Draw_Text("FPS TEST, 40 loop 2 screens", 10, 10, BLACK, 1, WHITE);
+		// SYSTICK_DelayMs(2000);
+		// ILI9341_Fill_Screen(BLACK);
+		// ILI9341_Draw_Rectangle(0,0,50,50,RED);
+
 		// SPI_Transmit(&spi1, &data, 1);
 		// transmit(0xC6);
 		// transmit(0x3F);
