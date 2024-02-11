@@ -479,6 +479,7 @@ if(Sending_in_Block != 0)
 		{
 		SPI_TransmitDMA(&hspi1, (unsigned char *)burst_buffer, Buffer_Size);
 		SYSTICK_DelayMs(1);
+		DMA_Stop(hspi1.txdma);
 		//SPI_Transmit(&hspi1, (unsigned char *)burst_buffer, Buffer_Size);
 		//HAL_SPI_Transmit(HSPI_INSTANCE, (unsigned char *)burst_buffer, Buffer_Size, 10);	
 		}
@@ -487,6 +488,8 @@ if(Sending_in_Block != 0)
 //REMAINDER!
 SPI_TransmitDMA(&hspi1, (unsigned char *)burst_buffer, Remainder_from_block);
 SYSTICK_DelayMs(1);
+DMA_Stop(hspi1.txdma);
+
 //SPI_Transmit(&hspi1, (unsigned char *)burst_buffer, Remainder_from_block);
 //HAL_SPI_Transmit(HSPI_INSTANCE, (unsigned char *)burst_buffer, Remainder_from_block, 10);	
 

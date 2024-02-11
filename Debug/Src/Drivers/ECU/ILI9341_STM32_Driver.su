@@ -9,8 +9,8 @@ ILI9341_STM32_Driver.c:280:6:ILI9341_Enable	8	static
 ILI9341_STM32_Driver.c:288:6:ILI9341_Init	8	static
 ILI9341_STM32_Driver.c:429:6:ILI9341_Draw_Colour	24	static
 ILI9341_STM32_Driver.c:446:6:ILI9341_Draw_Colour_Burst	64	dynamic
-ILI9341_STM32_Driver.c:499:6:ILI9341_Fill_Screen	16	static
-ILI9341_STM32_Driver.c:511:6:ILI9341_Draw_Pixel	32	static
-ILI9341_STM32_Driver.c:595:6:ILI9341_Draw_Rectangle	24	static
-ILI9341_STM32_Driver.c:611:6:ILI9341_Draw_Horizontal_Line	24	static
-ILI9341_STM32_Driver.c:623:6:ILI9341_Draw_Vertical_Line	24	static
+ILI9341_STM32_Driver.c:502:6:ILI9341_Fill_Screen	16	static
+ILI9341_STM32_Driver.c:514:6:ILI9341_Draw_Pixel	32	static
+ILI9341_STM32_Driver.c:598:6:ILI9341_Draw_Rectangle	24	static
+ILI9341_STM32_Driver.c:614:6:ILI9341_Draw_Horizontal_Line	24	static
+ILI9341_STM32_Driver.c:626:6:ILI9341_Draw_Vertical_Line	24	static
