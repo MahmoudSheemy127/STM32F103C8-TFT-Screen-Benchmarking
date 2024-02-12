@@ -92,6 +92,10 @@
 /* Global Variables ------------------------------------------------------------------*/
 volatile uint16_t LCD_HEIGHT = ILI9341_SCREEN_HEIGHT;
 volatile uint16_t LCD_WIDTH	 = ILI9341_SCREEN_WIDTH;
+uint8_t Color_buffer[500];
+uint32_t Color_bufferSize = 0;
+uint32_t Color_burstCounter = 0;
+uint32_t Color_burstSize = 0;
 
 /* Initialize SPI */
 void ILI9341_SPI_Init(void)
@@ -150,6 +154,7 @@ void ILI9341_SPI_Init(void)
 
 	/*Init DMA channels */
 	spiTxdma.dma_TypeDef = DMA1_3;
+	spiTxdma.dma_StatusTypedef = DMA1;
 	spiTxdma.dma_Mem2Mem = DMA_MEM2MEM_DISABLE;
 	spiTxdma.dma_Mode = DMA_NON_CIRCULAR_MODE;
 	spiTxdma.dma_Direction = DMA_READ_FROM_MEMORY;
@@ -157,11 +162,12 @@ void ILI9341_SPI_Init(void)
 	spiTxdma.dma_PeriphSize = DMA_PERIPH_SIZE_8_BITS;
 	spiTxdma.dma_MemIncMode = DMA_MEM_INC_ENABLE;
 	spiTxdma.dma_PeriphIncMode = DMA_PERIPH_INC_DISABLE;
-	spiTxdma.dma_Interrupt = DMA_INTERRUPT_DISABLE;
+	spiTxdma.dma_Interrupt = DMA_INTERRUPT_ENABLE;
 
 	hspi1.txdma = &spiTxdma;
 
 	DMA_Init(hspi1.txdma);
+	DMA_SetCallBackFn(hspi1.txdma,ILI9341_SPI_DMACallbackFn);
 
 	/* Init SPI */
 	SPI_Init(&hspi1);
@@ -171,6 +177,25 @@ void ILI9341_SPI_Init(void)
 // MX_GPIO_Init();																							//GPIO INIT
 // HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);	//CS OFF
 }
+
+void ILI9341_SPI_DMACallbackFn()
+{
+
+	DMA_Stop(hspi1.txdma);
+	//DMA_InterruptDisable(hspi1.txdma);
+	DMA_ClearInterruptFlag(hspi1.txdma);
+	if(Color_burstCounter < Color_burstSize)
+	{
+		SPI_TransmitDMA(&hspi1, (unsigned char *)Color_buffer, Color_bufferSize);
+		Color_burstCounter++;
+	}
+	else
+	{
+		Color_burstCounter = 0;
+		GPIO_WritePin(&CS, GPIO_PIN_SET);
+	}
+}
+
 
 /*Send data (char) to LCD*/
 void ILI9341_SPI_Send(uint8_t SPI_Data)
@@ -446,55 +471,50 @@ GPIO_WritePin(&CS, GPIO_PIN_SET);
 void ILI9341_Draw_Colour_Burst(uint16_t Colour, uint32_t Size)
 {
 //SENDS COLOUR
-uint32_t Buffer_Size = 0;
-if((Size*2) < BURST_MAX_SIZE)
-{
-	Buffer_Size = Size;
-}
-else
-{
-	Buffer_Size = BURST_MAX_SIZE;
-}
 	
 GPIO_WritePin(&DC, GPIO_PIN_SET);
 GPIO_WritePin(&CS, GPIO_PIN_RESET);
-// HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);	
-// HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
-
-unsigned char chifted = 	Colour>>8;;
-unsigned char burst_buffer[Buffer_Size];
-for(uint32_t j = 0; j < Buffer_Size; j+=2)
-	{
-		burst_buffer[j] = 	chifted;
-		burst_buffer[j+1] = Colour;
-	}
-
-uint32_t Sending_Size = Size*2;
-uint32_t Sending_in_Block = Sending_Size/Buffer_Size;
-uint32_t Remainder_from_block = Sending_Size%Buffer_Size;
-
-if(Sending_in_Block != 0)
+if((Size*2) < BURST_MAX_SIZE)
 {
-	for(uint32_t j = 0; j < (Sending_in_Block); j++)
+	Color_bufferSize = Size;
+}
+else
+{
+	Color_bufferSize = BURST_MAX_SIZE;
+}
+
+unsigned char shifted = 	Colour>>8;;
+for(uint32_t j = 0; j < Color_bufferSize; j+=2)
+{
+	Color_buffer[j] = 	shifted;
+	Color_buffer[j+1] = Colour;
+}
+uint32_t Sending_Size = Size*2;
+Color_burstSize = Sending_Size/Color_bufferSize;
+uint32_t Remainder_from_block = Sending_Size%Color_bufferSize;
+
+#if TRANSMIT_MODE == DMA_MODE
+if(Color_burstSize)
+{
+	SPI_TransmitDMA(&hspi1, (unsigned char *)Color_buffer, Color_bufferSize);
+}
+
+#else
+if(Color_burstSize != 0)
+{
+	for(uint32_t j = 0; j < (Color_burstSize); j++)
 		{
-		SPI_TransmitDMA(&hspi1, (unsigned char *)burst_buffer, Buffer_Size);
-		SYSTICK_DelayMs(1);
-		DMA_Stop(hspi1.txdma);
-		//SPI_Transmit(&hspi1, (unsigned char *)burst_buffer, Buffer_Size);
+		SPI_Transmit(&hspi1, (unsigned char *)Color_buffer, Color_bufferSize);
 		//HAL_SPI_Transmit(HSPI_INSTANCE, (unsigned char *)burst_buffer, Buffer_Size, 10);	
 		}
 }
 
-//REMAINDER!
-SPI_TransmitDMA(&hspi1, (unsigned char *)burst_buffer, Remainder_from_block);
-SYSTICK_DelayMs(1);
-DMA_Stop(hspi1.txdma);
-
-//SPI_Transmit(&hspi1, (unsigned char *)burst_buffer, Remainder_from_block);
-//HAL_SPI_Transmit(HSPI_INSTANCE, (unsigned char *)burst_buffer, Remainder_from_block, 10);	
-
+/* Transmit Remainder if exists */
+//SPI_TransmitDMA(&hspi1, (unsigned char *)Color_buffer, Remainder_from_block);
 GPIO_WritePin(&CS, GPIO_PIN_SET);
-//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+
+#endif
+
 }
 
 //FILL THE ENTIRE SCREEN WITH SELECTED COLOUR (either #define-d ones or custom 16bit)

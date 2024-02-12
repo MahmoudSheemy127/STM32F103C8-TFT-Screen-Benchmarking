@@ -109,6 +109,7 @@ typedef struct{
 
 typedef struct{
 	DMA_TypeDef* dma_TypeDef;
+	DMA_GTypeDef* dma_StatusTypedef;
     DMA_MODE dma_Mode;
     DMA_TRANSFER_DIRECTION dma_Direction;
     DMA_MEM_SIZE dma_MemSize;
@@ -120,7 +121,6 @@ typedef struct{
 }DMA_HandleTypeDef;
 
 
-
 /************************** FUNCTIONS *************************/
 HAL_Status DMA_Init(DMA_HandleTypeDef *copy_dmaHandle);
 HAL_Status DMA_SetPeriphAddress(DMA_HandleTypeDef *copy_dmaHandle,uint8_t *copy_u32PeriphAddress);
@@ -130,6 +130,8 @@ HAL_Status DMA_SetDataCounter(DMA_HandleTypeDef *hdma, uint32_t copy_u32DataLeng
 HAL_Status DMA_Stop(DMA_HandleTypeDef *hdma);
 HAL_Status DMA_Transfer(DMA_HandleTypeDef *hdma, uint8_t *srcData, uint8_t *destData, uint32_t dataLength);
 HAL_Status DMA_SetCallBackFn(DMA_HandleTypeDef *hdma, DMA_CallbackFn callbackFn);
-
+HAL_Status DMA_InterruptEnable(DMA_HandleTypeDef *hdma);
+HAL_Status DMA_InterruptDisable(DMA_HandleTypeDef *hdma);
+HAL_Status DMA_ClearInterruptFlag(DMA_HandleTypeDef *hdma);
 
 #endif /* DRIVERS_DMA_DMA_H_ */

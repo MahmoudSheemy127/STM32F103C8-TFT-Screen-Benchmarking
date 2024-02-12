@@ -39,37 +39,37 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := ARM-Drivers
+BUILD_ARTIFACT_NAME := NVIC
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-ARM-Drivers.elf \
+NVIC.elf \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-ARM-Drivers.list \
+NVIC.list \
 
 OBJCOPY_HEX += \
-ARM-Drivers.hex \
+NVIC.hex \
 
 OBJCOPY_BIN += \
-ARM-Drivers.bin \
+NVIC.bin \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: ARM-Drivers.elf secondary-outputs
+main-build: NVIC.elf secondary-outputs
 
 # Tool invocations
-ARM-Drivers.elf: $(OBJS) $(USER_OBJS) D:\Work\Embedded\Projects\Drivers\ARM-Drivers\STM32F103C6TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "ARM-Drivers.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"D:\Work\Embedded\Projects\Drivers\ARM-Drivers\STM32F103C6TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="ARM-Drivers.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+NVIC.elf: $(OBJS) $(USER_OBJS) D:\Courses\Ghafar\ARM\lab\NVIC\STM32F103C6TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "NVIC.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"D:\Courses\Ghafar\ARM\lab\NVIC\STM32F103C6TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="NVIC.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -78,24 +78,24 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-ARM-Drivers.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "ARM-Drivers.list"
+NVIC.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "NVIC.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-ARM-Drivers.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "ARM-Drivers.hex"
+NVIC.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "NVIC.hex"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-ARM-Drivers.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "ARM-Drivers.bin"
+NVIC.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "NVIC.bin"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) ARM-Drivers.bin ARM-Drivers.elf ARM-Drivers.hex ARM-Drivers.list default.size.stdout
+	-$(RM) NVIC.bin NVIC.elf NVIC.hex NVIC.list default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_HEX) $(OBJCOPY_BIN)

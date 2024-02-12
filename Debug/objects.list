@@ -1,6 +1,7 @@
 "./Src/CortexM3/Cortex_M3_Core.o"
 "./Src/CortexM3/SYSTICK_M3.o"
 "./Src/Drivers/DMA/DMA.o"
+"./Src/Drivers/ECU/ILI9341_GFX.o"
 "./Src/Drivers/ECU/ILI9341_STM32_Driver.o"
 "./Src/Drivers/GPIO/GPIO.o"
 "./Src/Drivers/RCC/RCC.o"

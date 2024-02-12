@@ -3,6 +3,7 @@
         "common.h": "c",
         "spi.h": "c",
         "ili9341_stm32_driver.h": "c",
-        "dma.h": "c"
+        "dma.h": "c",
+        "TIM.C": "cpp"
     }
 }

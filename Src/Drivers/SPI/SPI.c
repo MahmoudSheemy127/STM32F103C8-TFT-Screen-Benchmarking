@@ -293,6 +293,9 @@ HAL_Status SPI_TransmitDMA(SPI_HandleTypeDef* hspi, uint8_t* pData, uint32_t Siz
 
         /* Start sending */
         DMA_Start(hspi->txdma);
+
+        /* Stop sending */
+        //DMA_Stop(hspi->txdma);
     }
     return status;
 }

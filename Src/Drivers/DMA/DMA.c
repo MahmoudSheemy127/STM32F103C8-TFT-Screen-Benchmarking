@@ -259,6 +259,63 @@ HAL_Status DMA_SetCallBackFn(DMA_HandleTypeDef *hdma, DMA_CallbackFn callbackFn)
     return hal_Status;
 }
 
+HAL_Status DMA_InterruptEnable(DMA_HandleTypeDef *hdma)
+{
+    HAL_Status hal_Status = HAL_OKAY;
+    if(NULL == hdma )
+    {
+        hal_Status = HAL_ERROR;
+    }
+    else
+    {
+        SET_BIT(hdma->dma_TypeDef->CCR,DMA_CCR_TCIE_Pos);
+    }
+}
+
+HAL_Status DMA_InterruptDisable(DMA_HandleTypeDef *hdma)
+{
+    HAL_Status hal_Status = HAL_OKAY;
+    if(NULL == hdma )
+    {
+        hal_Status = HAL_ERROR;
+    }
+    else
+    {
+        CLR_BIT(hdma->dma_TypeDef->CCR,DMA_CCR_TCIE_Pos);
+    }
+}
+
+HAL_Status DMA_ClearInterruptFlag(DMA_HandleTypeDef *hdma)
+{
+    HAL_Status hal_Status = HAL_OKAY;
+    if(NULL == hdma)
+    {
+        hal_Status = HAL_ERROR;
+    }
+    else
+    {
+    switch ((uint32_t)hdma->dma_TypeDef)
+    {
+        case (uint32_t)DMA1_1:
+            // Code for DMA1_1
+            SET_BIT(hdma->dma_StatusTypedef->IFCR,1);
+            break;
+        case (uint32_t)DMA1_2:
+            // Code for DMA1_2
+            SET_BIT(hdma->dma_StatusTypedef->IFCR,5);
+            break;
+        case (uint32_t)DMA1_3:
+            // Code for DMA1_3
+            SET_BIT(hdma->dma_StatusTypedef->IFCR,9);
+            break;
+        default:
+            // Default case
+            break;
+    }        
+    }
+}
+
+
 
 void DMA1_Channel1_IRQHandler()
 {
@@ -270,6 +327,7 @@ void DMA1_Channel2_IRQHandler()
 }
 void DMA1_Channel3_IRQHandler()
 {
+
     DMA1_3_CallbackFnPtr();
 }
 void DMA1_Channel4_IRQHandler()

@@ -2,4 +2,4 @@ SPI.c:5:12:SPI_Init	24	static
 SPI.c:181:12:SPI_Transmit	32	static
 SPI.c:230:12:SPI_Receive	32	static
 SPI.c:276:12:SPI_TransmitDMA	32	static
-SPI.c:309:12:SPI_ReceiveDMA	32	static
+SPI.c:312:12:SPI_ReceiveDMA	32	static

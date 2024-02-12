@@ -5,12 +5,15 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../Src/Drivers/ECU/ILI9341_GFX.c \
 ../Src/Drivers/ECU/ILI9341_STM32_Driver.c 
 
 OBJS += \
+./Src/Drivers/ECU/ILI9341_GFX.o \
 ./Src/Drivers/ECU/ILI9341_STM32_Driver.o 
 
 C_DEPS += \
+./Src/Drivers/ECU/ILI9341_GFX.d \
 ./Src/Drivers/ECU/ILI9341_STM32_Driver.d 
 
 
@@ -21,7 +24,7 @@ Src/Drivers/ECU/%.o: ../Src/Drivers/ECU/%.c Src/Drivers/ECU/subdir.mk
 clean: clean-Src-2f-Drivers-2f-ECU
 
 clean-Src-2f-Drivers-2f-ECU:
-	-$(RM) ./Src/Drivers/ECU/ILI9341_STM32_Driver.d ./Src/Drivers/ECU/ILI9341_STM32_Driver.o
+	-$(RM) ./Src/Drivers/ECU/ILI9341_GFX.d ./Src/Drivers/ECU/ILI9341_GFX.o ./Src/Drivers/ECU/ILI9341_STM32_Driver.d ./Src/Drivers/ECU/ILI9341_STM32_Driver.o
 
 .PHONY: clean-Src-2f-Drivers-2f-ECU
 

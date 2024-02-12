@@ -15,6 +15,7 @@
 #include "Drivers/SPI/SPI.h"
 #include "CortexM3/SYSTICK_M3.h"
 #include "Drivers/ECU/ILI9341_STM32_Driver.h"
+#include "Drivers/ECU/ILI9341_GFX.h"
 
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
@@ -70,23 +71,54 @@ int main(void)
 
 	uint8_t data = 0x06;
 	/* Loop forever */
-	// NVIC_SetEnableInterrupt(NVIC_IRQ_DMA1_Channel4_IRQHandler);
+	NVIC_SetEnableInterrupt(NVIC_IRQ_DMA1_Channel3_IRQHandler);
 	// SPI_ReceiveDMA(&spi2, receiveArray,5);
 	// SPI_TransmitDMA(&spi1, sendArray, 5);
 	while(1)
 	{
 		// ILI9341_Fill_Screen(BLACK);
 		/* Interlacing demo */
+		// ILI9341_Draw_Rectangle(0,0,128,20,OLIVE);
+		// SYSTICK_DelayMs(50);
+		// ILI9341_Draw_Rectangle(0,40,128,20,OLIVE);
+		// SYSTICK_DelayMs(50);
+		// ILI9341_Draw_Rectangle(0,80,128,20,OLIVE);
+		// SYSTICK_DelayMs(50);
+		// ILI9341_Draw_Rectangle(0,120,128,20,OLIVE);
+		// SYSTICK_DelayMs(50);
+		// ILI9341_Draw_Rectangle(0,20,128,20,ORANGE);
+		// SYSTICK_DelayMs(50);
+		// ILI9341_Draw_Rectangle(0,60,128,20,ORANGE);
+		// SYSTICK_DelayMs(50);
+		// ILI9341_Draw_Rectangle(0,100,128,20,ORANGE);
+		// SYSTICK_DelayMs(50);
+		// ILI9341_Draw_Rectangle(0,140,128,20,ORANGE);
+		// //SYSTICK_DelayMs(200);
+		// SYSTICK_DelayMs(50);
+		// ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+		// ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
+		// SYSTICK_DelayMs(50);
+		// ILI9341_Draw_Text("Hello World1", 10, 10, BLACK, 1, WHITE);
+		// SYSTICK_DelayMs(2000);
+		// ILI9341_Set_Rotation(SCREEN_HORIZONTAL_2);
+		// ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
+		// SYSTICK_DelayMs(50);
+		// ILI9341_Draw_Text("Hello World2", 10, 10, BLACK, 1, WHITE);
+		// SYSTICK_DelayMs(2000);
+		ILI9341_Set_Rotation(SCREEN_VERTICAL_2);
+		ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
+		SYSTICK_DelayMs(50);
+		ILI9341_Draw_Text("dLrow oLLeH", 10, 10, BLACK, 1, WHITE);
+		SYSTICK_DelayMs(2000);
+		// ILI9341_Set_Rotation(SCREEN_VERTICAL_2);
+		// ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
+		// SYSTICK_DelayMs(50);
+		// ILI9341_Draw_Text("Hello World4", 10, 10, BLACK, 1, WHITE);
+		// SYSTICK_DelayMs(2000);
 
-		// ILI9341_Draw_Rectangle(0,0,128,20,RED);
-		// ILI9341_Draw_Rectangle(0,40,128,20,RED);
-		// ILI9341_Draw_Rectangle(0,80,128,20,RED);
-		// ILI9341_Draw_Rectangle(0,120,128,20,RED);
-		// ILI9341_Draw_Rectangle(0,20,128,20,BLUE);
-		// ILI9341_Draw_Rectangle(0,60,128,20,BLUE);
-		// ILI9341_Draw_Rectangle(0,100,128,20,BLUE);
-		// ILI9341_Draw_Rectangle(0,140,128,20,BLUE);
-		// ILI9341_Draw_Rectangle(0,0,128,160,RED);
+//		ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
+//		SYSTICK_DelayMs(200);
+
 		// ILI9341_Fill_Screen(BLACK);
 		// SYSTICK_DelayMs(200);
 		// ILI9341_Fill_Screen(RED);
@@ -96,12 +128,12 @@ int main(void)
 		// ILI9341_Fill_Screen(WHITE);
 		// SYSTICK_DelayMs(200);
 
-		ILI9341_Draw_Rectangle(0,0,128,160,BLUE);
-		SYSTICK_DelayMs(200);
-		ILI9341_Draw_Rectangle(0,0,128,160,BLACK);
-		SYSTICK_DelayMs(200);
-		ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
-		SYSTICK_DelayMs(200);
+//		ILI9341_Draw_Rectangle(0,0,128,160,BLUE);
+//		SYSTICK_DelayMs(200);
+//		ILI9341_Draw_Rectangle(0,0,128,160,BLACK);
+//		SYSTICK_DelayMs(200);
+//		ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
+//		SYSTICK_DelayMs(200);
 
 		// ILI9341_Fill_Screen(WHITE);
 		// SYSTICK_DelayMs(2000);
