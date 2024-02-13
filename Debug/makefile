@@ -10,6 +10,7 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include Startup/subdir.mk
+-include Src/Drivers/TIM/subdir.mk
 -include Src/Drivers/SPI/subdir.mk
 -include Src/Drivers/RCC/subdir.mk
 -include Src/Drivers/GPIO/subdir.mk

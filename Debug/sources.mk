@@ -27,6 +27,7 @@ Src/Drivers/ECU \
 Src/Drivers/GPIO \
 Src/Drivers/RCC \
 Src/Drivers/SPI \
+Src/Drivers/TIM \
 Src \
 Startup \
 

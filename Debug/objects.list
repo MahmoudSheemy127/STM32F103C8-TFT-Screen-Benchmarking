@@ -6,6 +6,7 @@
 "./Src/Drivers/GPIO/GPIO.o"
 "./Src/Drivers/RCC/RCC.o"
 "./Src/Drivers/SPI/SPI.o"
+"./Src/Drivers/TIM/TIM.o"
 "./Src/main.o"
 "./Src/syscalls.o"
 "./Src/sysmem.o"

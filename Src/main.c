@@ -16,6 +16,8 @@
 #include "CortexM3/SYSTICK_M3.h"
 #include "Drivers/ECU/ILI9341_STM32_Driver.h"
 #include "Drivers/ECU/ILI9341_GFX.h"
+#include "Drivers/TIM/TIM.h"
+
 
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
@@ -45,9 +47,12 @@ GPIO_HandleTypeDef miso2;
 GPIO_HandleTypeDef sck2;
 GPIO_HandleTypeDef nss2;
 
+GPIO_HandleTypeDef led;
+
 DMA_HandleTypeDef spiTxdma;
 DMA_HandleTypeDef spiRxdma;
 
+TIM_HandleTypeDef tim2;
 
 /* Define callback function */
 void DMA1_1_CallbackFn();
@@ -55,6 +60,8 @@ void DMA1_1_CallbackFn();
 void HAL_Init();
 
 void transmit(uint8_t cmd);
+
+void tim_callback();
 
 int main(void)
 {
@@ -69,9 +76,18 @@ int main(void)
 	HAL_Init();
 	ILI9341_Init();
 
+	/* Set Periodicity for timer */
+	TIM_SetPeriodicity(&tim2,20000);
+	/* Set Callback function */
+	TIM_SetCallBackFn(&tim2,tim_callback);
+	/* Start Timer */
+	TIM_Start(&tim2);
+
 	uint8_t data = 0x06;
 	/* Loop forever */
 	NVIC_SetEnableInterrupt(NVIC_IRQ_DMA1_Channel3_IRQHandler);
+	NVIC_SetEnableInterrupt(NVIC_IRQ_TIM2_IRQHandler);
+	
 	// SPI_ReceiveDMA(&spi2, receiveArray,5);
 	// SPI_TransmitDMA(&spi1, sendArray, 5);
 	while(1)
@@ -191,7 +207,22 @@ void HAL_Init()
 	 _RCC_GPIOB_ENABLE();
 	 _RCC_SPI1_ENABLE();
 	 _RCC_DMA1_ENABLE();
+	 _RCC_TIM2_ENABLE();
 
+	/* Init Timer */
+	tim2.Instance = TIM_2_BASE;
+	tim2.Interrupt = TIM_INTERRUPT_ENABLE;
+	tim2.NumberOfMilliseconds = 500;
+	tim2.Prescaler = TIM_PRESCALAR_VALUE_DIV_8;
+
+	TIM_Init(&tim2);
+
+	/*Init LED at pin A0 */
+	led.GPIO_TypeDef = GPIOA;
+	led.GPIO_Pin = GPIO_PIN_0;
+	led.GPIO_Mode = GPIO_MODE_OUTPUT_2MHZ;
+	led.GPIO_CNF = GPIO_CNF_OUTPUT_PUSH_PULL;
+	GPIO_Init(&led);
 	//  /* Init SPI 1 as master */
 	//  spi1.Instance = SPI1;
 	//  spi1.Mode = SPI_MODE_MASTER;
@@ -372,3 +403,8 @@ void DMA1_1_CallbackFn()
 ////
 ////	}
 //}
+
+void tim_callback()
+{
+	GPIO_TogglePin(&led);
+}
