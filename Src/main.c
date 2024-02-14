@@ -77,7 +77,7 @@ int main(void)
 	ILI9341_Init();
 
 	/* Set Periodicity for timer */
-	TIM_SetPeriodicity(&tim2,20000);
+	TIM_SetPeriodicity(&tim2,1000);
 	/* Set Callback function */
 	TIM_SetCallBackFn(&tim2,tim_callback);
 	/* Start Timer */
@@ -212,7 +212,7 @@ void HAL_Init()
 	/* Init Timer */
 	tim2.Instance = TIM_2_BASE;
 	tim2.Interrupt = TIM_INTERRUPT_ENABLE;
-	tim2.NumberOfMilliseconds = 500;
+	tim2.NumberOfMilliseconds = 1000;
 	tim2.Prescaler = TIM_PRESCALAR_VALUE_DIV_8;
 
 	TIM_Init(&tim2);

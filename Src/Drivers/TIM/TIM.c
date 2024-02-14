@@ -30,19 +30,16 @@ HAL_Status TIM_Init(TIM_HandleTypeDef *TIM_Handle)
         SET_BIT(TIM_Handle->Instance->CR1, TIM_CR1_ARPE_POS);
 
 
-        /* Set Counter with Preload value */
-        TIM_Handle->Instance->CNT = TIM_ARR_VALUE;
-
         /* Set Auto-Reload value */
         TIM_Handle->Instance->ARR = TIM_ARR_VALUE;
 
         /* Set Periodicity */
         switch((uint32_t)TIM_Handle->Instance)
         {
-            case TIM_2_BASE:
+            case (uint32_t)TIM_2_BASE:
             TIM2_NumOfOverFlows =   TIM_Handle->NumberOfMilliseconds / TIM_OVERFLOW_TIME_IN_MS;
             break;
-            case TIM_3_BASE:
+            case (uint32_t)TIM_3_BASE:
             TIM3_NumOfOverFlows =   TIM_Handle->NumberOfMilliseconds / TIM_OVERFLOW_TIME_IN_MS;
             break;
         }
@@ -217,10 +214,10 @@ HAL_Status TIM_SetPeriodicity(TIM_HandleTypeDef *TIM_Handle,uint32_t TIM_NumOfMi
         /* Set Periodicity */
         switch((uint32_t)TIM_Handle->Instance)
         {
-            case TIM_2_BASE:
+            case (uint32_t)TIM_2_BASE:
             TIM2_NumOfOverFlows =   TIM_NumOfMilliSeconds / TIM_OVERFLOW_TIME_IN_MS;
             break;
-            case TIM_3_BASE:
+            case (uint32_t)TIM_3_BASE:
             TIM3_NumOfOverFlows =   TIM_NumOfMilliSeconds / TIM_OVERFLOW_TIME_IN_MS;
             break;
         }
@@ -257,10 +254,15 @@ HAL_Status TIM_SetCallBackFn(TIM_HandleTypeDef *TIM_Handle,void (*callback_fn)(v
  */
 void TIM2_IRQHandler()
 {
+    /* Disable Timer Counter */
+    CLR_BIT(TIM_2_BASE->CR1,TIM_CR1_CEN_POS);
+    /*Clear Update Interrupt Flag*/
+    CLR_BIT(TIM_2_BASE->SR,TIM_SR_UIF_POS);
     #if TIM_APP_MODE == TIM_STOPWATCH_APP_MODE
     TIM2_OverFlowCounter++;
     #elif TIM_APP_MODE == TIM_TIMER_APP_MODE
     /* Check overflow counter */
+    uint32_t counter = TIM_2_BASE->CNT;
     if(TIM2_OverFlowCounter < TIM2_NumOfOverFlows)
     {
         TIM2_OverFlowCounter++;
@@ -273,4 +275,6 @@ void TIM2_IRQHandler()
     }
 
     #endif
+    /* Start Timer counter */
+    SET_BIT(TIM_2_BASE->CR1,TIM_CR1_CEN_POS);
 }

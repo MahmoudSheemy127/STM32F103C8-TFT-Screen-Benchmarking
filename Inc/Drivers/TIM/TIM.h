@@ -6,12 +6,12 @@
 
 
 /*-----------START MACROS-----------------------------*/
-#define TIM_2_BASE          (APB1_BASE+0x0000)
-#define TIM_3_BASE          (APB1_BASE+0x0400)
-#define TIM_4_BASE          (APB1_BASE+0x0800)
-#define TIM_5_BASE          (APB1_BASE+0x0C00)
-#define TIM_6_BASE          (APB1_BASE+0x1000)
-#define TIM_7_BASE          (APB1_BASE+0x1400)
+#define TIM_2_BASE          ((TIM_TypeDef*)(APB1_BASE+0x0000))
+#define TIM_3_BASE          ((TIM_TypeDef*)(APB1_BASE+0x0400))
+#define TIM_4_BASE          ((TIM_TypeDef*)(APB1_BASE+0x0800))
+#define TIM_5_BASE          ((TIM_TypeDef*)(APB1_BASE+0x0C00))
+#define TIM_6_BASE          ((TIM_TypeDef*)(APB1_BASE+0x1000))
+#define TIM_7_BASE          ((TIM_TypeDef*)(APB1_BASE+0x1400))
 
 /* Register Bit Position Macros */
 #define TIM_CR1_CEN_POS     0
@@ -20,10 +20,11 @@
 #define TIM_CR1_OPM_POS     3
 #define TIM_CR1_ARPE_POS    7
 #define TIM_DIER_UIE_POS    0
+#define TIM_SR_UIF_POS      0
 
 /* TIMING MACROS */
 #define TIM_OVERFLOW_TIME_IN_MS         1
-#define TIM_ARR_VALUE                   (uint16_t)0xFC18
+#define TIM_ARR_VALUE                   (uint16_t)0x03E8
 #define TIM_PRESCALAR_VALUE_DIV_8       0x08
 
 #define TIM_STOPWATCH_APP_MODE     0
