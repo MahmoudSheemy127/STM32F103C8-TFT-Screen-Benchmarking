@@ -85,6 +85,7 @@
 #include "Drivers/GPIO/GPIO.h"
 #include "Drivers/DMA/DMA.h"
 #include "CortexM3/SYSTICK_M3.h"
+#include "Drivers/TIM/TIM.h"
 // #include "spi.h"
 // #include "gpio.h"
 #include "ILI9341_STM32_Driver.h"
@@ -96,6 +97,9 @@ uint8_t Color_buffer[500];
 uint32_t Color_bufferSize = 0;
 uint32_t Color_burstCounter = 0;
 uint32_t Color_burstSize = 0;
+uint32_t ILI9341_CurrentTimeElapsedMs = 0;
+float ILI9341_OverallTimeElapsedMs = 0;
+TIM_HandleTypeDef TIM2;
 
 /* Initialize SPI */
 void ILI9341_SPI_Init(void)
@@ -171,12 +175,49 @@ void ILI9341_SPI_Init(void)
 
 	/* Init SPI */
 	SPI_Init(&hspi1);
+
+
+	/* Init Timer for benchmarking */
+	TIM2.Instance = TIM_2_BASE;
+	TIM2.Interrupt = TIM_INTERRUPT_ENABLE;
+	TIM2.NumberOfMilliseconds = 1;
+	TIM2.Prescaler = TIM_PRESCALAR_VALUE_DIV_8;
+
+	/* Set Callback function for timer */
+	TIM_SetCallBackFn(&TIM2,ILI9341_TimerCallbackFn);
+	/* Init */
+	TIM_Init(&TIM2);	
 	GPIO_WritePin(&CS, GPIO_PIN_RESET);
 
 // MX_SPI5_Init();																							//SPI INIT
 // MX_GPIO_Init();																							//GPIO INIT
 // HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);	//CS OFF
 }
+
+
+void ILI9341_StartBenchmark()
+{
+	/* Reset Timer Elapsed counter */
+	ILI9341_CurrentTimeElapsedMs = 0;
+	/* Reset Timer Counter */
+	TIM2.Instance->CNT = 0;
+	/* Start Timer */
+	TIM_Start(&TIM2);
+}
+
+void ILI9341_StopBenchmark()
+{
+	/* Stop Timer */
+	TIM_Stop(&TIM2);
+	/* Calculate TimeElapsed and add it to overallTimeElapsed */
+	ILI9341_OverallTimeElapsedMs += ILI9341_CurrentTimeElapsedMs + (float)((TIM2.Instance->CNT) * 0.001);
+}
+
+void ILI9341_TimerCallbackFn()
+{	
+	ILI9341_CurrentTimeElapsedMs++;
+}
+
 
 void ILI9341_SPI_DMACallbackFn()
 {
@@ -193,9 +234,20 @@ void ILI9341_SPI_DMACallbackFn()
 	{
 		Color_burstCounter = 0;
 		GPIO_WritePin(&CS, GPIO_PIN_SET);
+		/* STOP benchmarking */
+		#if BENCHMARK_ENABLE
+		ILI9341_StopBenchmark();
+		#endif
 	}
 }
 
+float ILI9341_Return_TimeElapsed()
+{
+	float buff = ILI9341_OverallTimeElapsedMs;
+	ILI9341_OverallTimeElapsedMs = 0;
+	ILI9341_CurrentTimeElapsedMs = 0;
+	return buff;
+} 
 
 /*Send data (char) to LCD*/
 void ILI9341_SPI_Send(uint8_t SPI_Data)
@@ -493,6 +545,10 @@ uint32_t Sending_Size = Size*2;
 Color_burstSize = Sending_Size/Color_bufferSize;
 uint32_t Remainder_from_block = Sending_Size%Color_bufferSize;
 
+#if BENCHMARK_ENABLE
+ILI9341_StartBenchmark();
+#endif
+
 #if TRANSMIT_MODE == DMA_MODE
 if(Color_burstSize)
 {
@@ -508,6 +564,11 @@ if(Color_burstSize != 0)
 		//HAL_SPI_Transmit(HSPI_INSTANCE, (unsigned char *)burst_buffer, Buffer_Size, 10);	
 		}
 }
+
+#if BENCHMARK_ENABLE
+/* Stop Benchmark */
+ILI9341_StopBenchmark();
+#endif
 
 /* Transmit Remainder if exists */
 //SPI_TransmitDMA(&hspi1, (unsigned char *)Color_buffer, Remainder_from_block);

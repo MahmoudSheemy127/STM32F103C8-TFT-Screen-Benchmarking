@@ -1,6 +1,7 @@
-ILI9341_GFX.c:56:6:ILI9341_Draw_Hollow_Circle	48	static
-ILI9341_GFX.c:91:6:ILI9341_Draw_Filled_Circle	56	static
-ILI9341_GFX.c:128:6:ILI9341_Draw_Hollow_Rectangle_Coord	40	static
-ILI9341_GFX.c:178:6:ILI9341_Draw_Filled_Rectangle_Coord	48	static
-ILI9341_GFX.c:226:6:ILI9341_Draw_Char	48	static
-ILI9341_GFX.c:265:6:ILI9341_Draw_Text	32	static
+ILI9341_GFX.c:59:6:ILI9341_Draw_Hollow_Circle	48	static
+ILI9341_GFX.c:94:6:ILI9341_Draw_Filled_Circle	56	static
+ILI9341_GFX.c:131:6:ILI9341_Draw_Hollow_Rectangle_Coord	40	static
+ILI9341_GFX.c:181:6:ILI9341_Draw_Filled_Rectangle_Coord	48	static
+ILI9341_GFX.c:229:6:ILI9341_Draw_Char	48	static
+ILI9341_GFX.c:266:6:ILI9341_Text_Format	28	static
+ILI9341_GFX.c:276:6:ILI9341_Draw_Text	40	static

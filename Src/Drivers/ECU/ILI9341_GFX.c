@@ -50,6 +50,9 @@
 #include "ILI9341_STM32_Driver.h"
 #include "ILI9341_GFX.h"
 #include "5x5_font.h"
+#include <string.h>
+#include <stdio.h>
+#include <stdarg.h>
 // #include "spi.h"
 
 /*Draw hollow circle at X,Y location with specified radius and colour. X and Y represent circles center */
@@ -91,7 +94,7 @@ void ILI9341_Draw_Hollow_Circle(uint16_t X, uint16_t Y, uint16_t Radius, uint16_
 void ILI9341_Draw_Filled_Circle(uint16_t X, uint16_t Y, uint16_t Radius, uint16_t Colour)
 {
 	
-		int x = Radius;
+	int x = Radius;
     int y = 0;
     int xChange = 1 - (Radius << 1);
     int yChange = 0;
@@ -260,14 +263,26 @@ void ILI9341_Draw_Char(char Character, uint8_t X, uint8_t Y, uint16_t Colour, ui
     }
 }
 
+void ILI9341_Text_Format(char* dest_str, uint8_t *msg, ...)
+{
+    va_list arg_list;
+    va_start(arg_list,msg);
+    vsprintf(dest_str,msg,arg_list);
+	va_end (arg_list);
+}
+
 /*Draws an array of characters (fonts imported from fonts.h) at X,Y location with specified font colour, size and Background colour*/
 /*See fonts.h implementation of font on what is required for changing to a different font when switching fonts libraries*/
 void ILI9341_Draw_Text(const char* Text, uint8_t X, uint8_t Y, uint16_t Colour, uint16_t Size, uint16_t Background_Colour)
 {
-    while (*Text) {
-        ILI9341_Draw_Char(*Text++, X, Y, Colour, Size, Background_Colour);
-        X += CHAR_WIDTH*Size;
-    }
+	
+	for(int i=strlen(Text)-1;i>=0;i--)
+	{
+			ILI9341_Draw_Char(Text[i], X, Y, Colour, Size, Background_Colour);
+			X += CHAR_WIDTH*Size;
+	}
+    // while (*Text) {
+    // }
 }
 
 /*Draws a full screen picture from flash. Image converted from RGB .jpeg/other to C array using online converter*/

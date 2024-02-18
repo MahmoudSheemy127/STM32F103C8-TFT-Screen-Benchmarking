@@ -7,16 +7,16 @@
  */
 
 #include <stdint.h>
-
+// #include <stdio.h>
 #include "CortexM3/Cortex_M3_Core.h"
 #include "Drivers/GPIO/GPIO.h"
 #include "Drivers/RCC/RCC.h"
 #include "Drivers/DMA/DMA.h"
 #include "Drivers/SPI/SPI.h"
 #include "CortexM3/SYSTICK_M3.h"
-#include "Drivers/ECU/ILI9341_STM32_Driver.h"
-#include "Drivers/ECU/ILI9341_GFX.h"
 #include "Drivers/TIM/TIM.h"
+#include "Drivers/ECU/ILI9341_GFX.h"
+#include "Drivers/ECU/ILI9341_STM32_Driver.h"
 
 
 
@@ -76,14 +76,8 @@ int main(void)
 	HAL_Init();
 	ILI9341_Init();
 
-	/* Set Periodicity for timer */
-	TIM_SetPeriodicity(&tim2,1000);
-	/* Set Callback function */
-	TIM_SetCallBackFn(&tim2,tim_callback);
-	/* Start Timer */
-	TIM_Start(&tim2);
-
 	uint8_t data = 0x06;
+	float res = 5.5;
 	/* Loop forever */
 	NVIC_SetEnableInterrupt(NVIC_IRQ_DMA1_Channel3_IRQHandler);
 	NVIC_SetEnableInterrupt(NVIC_IRQ_TIM2_IRQHandler);
@@ -94,25 +88,25 @@ int main(void)
 	{
 		// ILI9341_Fill_Screen(BLACK);
 		/* Interlacing demo */
-		// ILI9341_Draw_Rectangle(0,0,128,20,OLIVE);
-		// SYSTICK_DelayMs(50);
-		// ILI9341_Draw_Rectangle(0,40,128,20,OLIVE);
-		// SYSTICK_DelayMs(50);
-		// ILI9341_Draw_Rectangle(0,80,128,20,OLIVE);
-		// SYSTICK_DelayMs(50);
-		// ILI9341_Draw_Rectangle(0,120,128,20,OLIVE);
-		// SYSTICK_DelayMs(50);
-		// ILI9341_Draw_Rectangle(0,20,128,20,ORANGE);
-		// SYSTICK_DelayMs(50);
-		// ILI9341_Draw_Rectangle(0,60,128,20,ORANGE);
-		// SYSTICK_DelayMs(50);
-		// ILI9341_Draw_Rectangle(0,100,128,20,ORANGE);
-		// SYSTICK_DelayMs(50);
-		// ILI9341_Draw_Rectangle(0,140,128,20,ORANGE);
-		// //SYSTICK_DelayMs(200);
-		// SYSTICK_DelayMs(50);
+		ILI9341_Draw_Rectangle(0,0,128,20,OLIVE);
+		SYSTICK_DelayMs(50);
+		ILI9341_Draw_Rectangle(0,40,128,20,OLIVE);
+		SYSTICK_DelayMs(50);
+		ILI9341_Draw_Rectangle(0,80,128,20,OLIVE);
+		SYSTICK_DelayMs(50);
+		ILI9341_Draw_Rectangle(0,120,128,20,OLIVE);
+		SYSTICK_DelayMs(50);
+		ILI9341_Draw_Rectangle(0,20,128,20,ORANGE);
+		SYSTICK_DelayMs(50);
+		ILI9341_Draw_Rectangle(0,60,128,20,ORANGE);
+		SYSTICK_DelayMs(50);
+		ILI9341_Draw_Rectangle(0,100,128,20,ORANGE);
+		SYSTICK_DelayMs(50);
+		ILI9341_Draw_Rectangle(0,140,128,20,ORANGE);
+		SYSTICK_DelayMs(200);
+		res = ILI9341_Return_TimeElapsed();
+		SYSTICK_DelayMs(50);
 		// ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
-		// ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
 		// SYSTICK_DelayMs(50);
 		// ILI9341_Draw_Text("Hello World1", 10, 10, BLACK, 1, WHITE);
 		// SYSTICK_DelayMs(2000);
@@ -121,11 +115,15 @@ int main(void)
 		// SYSTICK_DelayMs(50);
 		// ILI9341_Draw_Text("Hello World2", 10, 10, BLACK, 1, WHITE);
 		// SYSTICK_DelayMs(2000);
-		ILI9341_Set_Rotation(SCREEN_VERTICAL_2);
+		// ILI9341_Set_Rotation(SCREEN_VERTICAL_2);
+		// ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
 		ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
 		SYSTICK_DelayMs(50);
-		ILI9341_Draw_Text("dLrow oLLeH", 10, 10, BLACK, 1, WHITE);
+		char msg[20];
+		ILI9341_Text_Format(msg,"Total time spent %dms",(int)res);
+		ILI9341_Draw_Text(msg, 10, 10, BLACK, 1, WHITE);
 		SYSTICK_DelayMs(2000);
+		ILI9341_Return_TimeElapsed();
 		// ILI9341_Set_Rotation(SCREEN_VERTICAL_2);
 		// ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
 		// SYSTICK_DelayMs(50);
@@ -210,12 +208,12 @@ void HAL_Init()
 	 _RCC_TIM2_ENABLE();
 
 	/* Init Timer */
-	tim2.Instance = TIM_2_BASE;
-	tim2.Interrupt = TIM_INTERRUPT_ENABLE;
-	tim2.NumberOfMilliseconds = 1000;
-	tim2.Prescaler = TIM_PRESCALAR_VALUE_DIV_8;
+	// tim2.Instance = TIM_2_BASE;
+	// tim2.Interrupt = TIM_INTERRUPT_ENABLE;
+	// tim2.NumberOfMilliseconds = 1000;
+	// tim2.Prescaler = TIM_PRESCALAR_VALUE_DIV_8;
 
-	TIM_Init(&tim2);
+	// TIM_Init(&tim2);
 
 	/*Init LED at pin A0 */
 	led.GPIO_TypeDef = GPIOA;

@@ -108,8 +108,8 @@
 /* Transmit Type */
 #define DMA_MODE 1
 #define SPI_MODE 0
-#define TRANSMIT_MODE   SPI_MODE
-
+#define TRANSMIT_MODE       SPI_MODE
+#define BENCHMARK_ENABLE    1
 
 
 
@@ -148,6 +148,7 @@ GPIO_HandleTypeDef DC;
 GPIO_HandleTypeDef RST;
 GPIO_HandleTypeDef SCK;
 GPIO_HandleTypeDef SDA;
+//TIM_HandleTypeDef TIM2;
 
 
 // typedef struct 
@@ -180,7 +181,10 @@ void ILI9341_Draw_Colour(uint16_t Colour);
 void ILI9341_Draw_Pixel(uint16_t X,uint16_t Y,uint16_t Colour);
 void ILI9341_Draw_Colour_Burst(uint16_t Colour, uint32_t Size);
 void ILI9341_SPI_DMACallbackFn();
-
+void ILI9341_StartBenchmark();
+void ILI9341_EndBenchmark();
+void ILI9341_TimerCallbackFn();
+float ILI9341_Return_TimeElapsed();
 
 void ILI9341_Draw_Rectangle(uint16_t X, uint16_t Y, uint16_t Width, uint16_t Height, uint16_t Colour);
 void ILI9341_Draw_Horizontal_Line(uint16_t X, uint16_t Y, uint16_t Width, uint16_t Colour);
