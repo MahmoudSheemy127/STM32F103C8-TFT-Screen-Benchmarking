@@ -96,6 +96,7 @@ volatile uint16_t LCD_WIDTH	 = ILI9341_SCREEN_WIDTH;
 uint8_t Color_buffer[500];
 uint32_t Color_bufferSize = 0;
 uint32_t Color_burstCounter = 0;
+uint32_t TotalSize = 0;
 uint32_t Color_burstSize = 0;
 uint32_t ILI9341_CurrentTimeElapsedMs = 0;
 float ILI9341_OverallTimeElapsedMs = 0;
@@ -194,6 +195,12 @@ void ILI9341_SPI_Init(void)
 // HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);	//CS OFF
 }
 
+int ILI9341_Return_BenchmarkSize()
+{
+	int size = TotalSize;
+	TotalSize = 0;
+	return size;
+}
 
 void ILI9341_StartBenchmark()
 {
@@ -546,6 +553,7 @@ Color_burstSize = Sending_Size/Color_bufferSize;
 uint32_t Remainder_from_block = Sending_Size%Color_bufferSize;
 
 #if BENCHMARK_ENABLE
+TotalSize += Sending_Size;
 ILI9341_StartBenchmark();
 #endif
 
@@ -571,7 +579,7 @@ ILI9341_StopBenchmark();
 #endif
 
 /* Transmit Remainder if exists */
-//SPI_TransmitDMA(&hspi1, (unsigned char *)Color_buffer, Remainder_from_block);
+SPI_Transmit(&hspi1, (unsigned char *)Color_buffer, Remainder_from_block);
 GPIO_WritePin(&CS, GPIO_PIN_SET);
 
 #endif

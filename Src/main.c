@@ -78,6 +78,7 @@ int main(void)
 
 	uint8_t data = 0x06;
 	float res = 5.5;
+	uint32_t size = 0;
 	/* Loop forever */
 	NVIC_SetEnableInterrupt(NVIC_IRQ_DMA1_Channel3_IRQHandler);
 	NVIC_SetEnableInterrupt(NVIC_IRQ_TIM2_IRQHandler);
@@ -88,84 +89,123 @@ int main(void)
 	{
 		// ILI9341_Fill_Screen(BLACK);
 		/* Interlacing demo */
-		ILI9341_Draw_Rectangle(0,0,128,20,OLIVE);
-		SYSTICK_DelayMs(50);
-		ILI9341_Draw_Rectangle(0,40,128,20,OLIVE);
-		SYSTICK_DelayMs(50);
-		ILI9341_Draw_Rectangle(0,80,128,20,OLIVE);
-		SYSTICK_DelayMs(50);
-		ILI9341_Draw_Rectangle(0,120,128,20,OLIVE);
-		SYSTICK_DelayMs(50);
-		ILI9341_Draw_Rectangle(0,20,128,20,ORANGE);
-		SYSTICK_DelayMs(50);
-		ILI9341_Draw_Rectangle(0,60,128,20,ORANGE);
-		SYSTICK_DelayMs(50);
-		ILI9341_Draw_Rectangle(0,100,128,20,ORANGE);
-		SYSTICK_DelayMs(50);
-		ILI9341_Draw_Rectangle(0,140,128,20,ORANGE);
+		/* Bricks draw */
+		ILI9341_Draw_Rectangle(0,0,128,20,BLUE);
 		SYSTICK_DelayMs(200);
-		res = ILI9341_Return_TimeElapsed();
+		ILI9341_Draw_Rectangle(0,40,128,20,BLUE);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Rectangle(0,80,128,20,BLUE);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Rectangle(0,120,128,20,BLUE);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Rectangle(0,20,128,20,RED);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Rectangle(0,60,128,20,RED);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Rectangle(0,100,128,20,RED);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Rectangle(0,140,128,20,RED);
+		SYSTICK_DelayMs(200);
+		//res = ILI9341_Return_TimeElapsed();
 		SYSTICK_DelayMs(50);
-		// ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
-		// SYSTICK_DelayMs(50);
-		// ILI9341_Draw_Text("Hello World1", 10, 10, BLACK, 1, WHITE);
-		// SYSTICK_DelayMs(2000);
-		// ILI9341_Set_Rotation(SCREEN_HORIZONTAL_2);
-		// ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
-		// SYSTICK_DelayMs(50);
-		// ILI9341_Draw_Text("Hello World2", 10, 10, BLACK, 1, WHITE);
-		// SYSTICK_DelayMs(2000);
-		// ILI9341_Set_Rotation(SCREEN_VERTICAL_2);
-		// ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
+		/* Football field draw */
+		ILI9341_Draw_Rectangle(0,0,128,160,GREEN);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Hollow_Circle(64,80,20,WHITE);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Hollow_Circle(64,80,5,WHITE);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Horizontal_Line(0,80,128,WHITE);
+		/* Draw Playground border */
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Vertical_Line(0,0,160,WHITE);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Vertical_Line(127,0,160,WHITE);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Horizontal_Line(0,0,128,WHITE);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Horizontal_Line(0,159,128,WHITE);
+		SYSTICK_DelayMs(200);
+		/* Draw the Goal */
+		ILI9341_Draw_Horizontal_Line(44,30,40,WHITE);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Horizontal_Line(44,130,40,WHITE);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Vertical_Line(44,0,30,WHITE);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Vertical_Line(84,0,30,WHITE);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Vertical_Line(44,130,30,WHITE);
+		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Vertical_Line(84,130,30,WHITE);
+		SYSTICK_DelayMs(200);
+
+		/* Draw black background */
+		ILI9341_Draw_Rectangle(0,0,128,160,BLACK);
+		SYSTICK_DelayMs(200);
+		/* Draw Histogram animation Ascending */
+		for(uint8_t i=1;i<=8;i++)
+		{
+			ILI9341_Draw_Rectangle(0,(20*(i-1)),(16*i),20,GREENYELLOW);
+			SYSTICK_DelayMs(200);			
+		}
+		/* Draw Histogram animation Descending */
+		for(int i=7;i>=0;i--)
+		{
+			/* Clear previous block */
+			ILI9341_Draw_Rectangle(0,(20*i),(16*(i+1)),20,BLACK);
+			SYSTICK_DelayMs(50);			
+			ILI9341_Draw_Rectangle(0,(20*i),(16*(8-i)),20,GREENYELLOW);
+			SYSTICK_DelayMs(200);			
+		}
+		/* Change height of Histogram bars to all be the same */
+		for(int i=7;i>=0;i--)
+		{
+			/* Clear previous block */
+			ILI9341_Draw_Rectangle(0,(20*i),(16*(i+1)),20,BLACK);
+			SYSTICK_DelayMs(50);			
+			ILI9341_Draw_Rectangle(0,(20*i),128,20,GREENYELLOW);
+			SYSTICK_DelayMs(200);			
+		}
+		/* Fill Screens with different colors */
+		ILI9341_Draw_Rectangle(0,0,128,160,GREEN);
+		SYSTICK_DelayMs(500);
+//		ILI9341_Draw_Rectangle(0,0,128,160,YELLOW);
+//		SYSTICK_DelayMs(200);
+		ILI9341_Draw_Rectangle(0,0,128,160,PURPLE);
+		SYSTICK_DelayMs(500);
+		ILI9341_Draw_Rectangle(0,0,128,160,CYAN);
+		SYSTICK_DelayMs(500);
+		ILI9341_Draw_Rectangle(0,0,128,160,PINK);
+		SYSTICK_DelayMs(500);
+		/* Clear and Show status */
 		ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
-		SYSTICK_DelayMs(50);
+		SYSTICK_DelayMs(500);
+		res = ILI9341_Return_TimeElapsed();
+		size = (int)(ILI9341_Return_BenchmarkSize() / (float)1000);
 		char msg[20];
-		ILI9341_Text_Format(msg,"Total time spent %dms",(int)res);
-		ILI9341_Draw_Text(msg, 10, 10, BLACK, 1, WHITE);
-		SYSTICK_DelayMs(2000);
+		#if TRANSMIT_MODE == DMA_MODE
+		ILI9341_Draw_Text(" SPI DMA benchmark:", 5, 5, BLACK, 1, WHITE);
+		#else
+		ILI9341_Draw_Text(" Normal SPI benchmark:", 5, 5, BLACK, 1, WHITE);
+		#endif
+		ILI9341_Text_Format(msg,"Total time: %d ms",(int)res);
+		ILI9341_Draw_Text(msg, 5, 20, BLACK, 1, WHITE);
+		ILI9341_Text_Format(msg,"Total bytes: %d KB",(int)(size));
+		ILI9341_Draw_Text(msg, 5, 40, BLACK, 1, WHITE);
+		#if TRANSMIT_MODE == DMA_MODE
+		int rate = (int)(size / (float)res);
+		ILI9341_Text_Format(msg,"Rate: %d KB per 1ms",(int)(rate));
+		#else
+		int rate = (int)((size*1000) / (float)res);
+		ILI9341_Text_Format(msg,"Rate: %d Bytes per 1ms",(int)(rate));
+		#endif
+		// ILI9341_Text_Format(msg,"Rate: %d KB per 1ms",(int)(rate));
+		ILI9341_Draw_Text(msg, 5, 60, BLACK, 1, WHITE);
+
+		SYSTICK_DelayMs(8000);
 		ILI9341_Return_TimeElapsed();
-		// ILI9341_Set_Rotation(SCREEN_VERTICAL_2);
-		// ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
-		// SYSTICK_DelayMs(50);
-		// ILI9341_Draw_Text("Hello World4", 10, 10, BLACK, 1, WHITE);
-		// SYSTICK_DelayMs(2000);
 
-//		ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
-//		SYSTICK_DelayMs(200);
-
-		// ILI9341_Fill_Screen(BLACK);
-		// SYSTICK_DelayMs(200);
-		// ILI9341_Fill_Screen(RED);
-		// SYSTICK_DelayMs(200);
-		// ILI9341_Fill_Screen(GREEN);
-		// SYSTICK_DelayMs(200);
-		// ILI9341_Fill_Screen(WHITE);
-		// SYSTICK_DelayMs(200);
-
-//		ILI9341_Draw_Rectangle(0,0,128,160,BLUE);
-//		SYSTICK_DelayMs(200);
-//		ILI9341_Draw_Rectangle(0,0,128,160,BLACK);
-//		SYSTICK_DelayMs(200);
-//		ILI9341_Draw_Rectangle(0,0,128,160,WHITE);
-//		SYSTICK_DelayMs(200);
-
-		// ILI9341_Fill_Screen(WHITE);
-		// SYSTICK_DelayMs(2000);
-		// ILI9341_Set_Rotation(SCREEN_HORIZONTAL_2);
-		// //ILI9341_Draw_Text("FPS TEST, 40 loop 2 screens", 10, 10, BLACK, 1, WHITE);
-		// SYSTICK_DelayMs(2000);
-		// ILI9341_Fill_Screen(BLACK);
-		// ILI9341_Draw_Rectangle(0,0,50,50,RED);
-
-		// SPI_Transmit(&spi1, &data, 1);
-		// transmit(0xC6);
-		// transmit(0x3F);
-		// transmit(0xAB);
-		// data++;
-		//SYSTICK_DelayMs(500);
-
-		// blinkLed();
-		// SYSTICK_DelayMs(500);
 	}
 
 }

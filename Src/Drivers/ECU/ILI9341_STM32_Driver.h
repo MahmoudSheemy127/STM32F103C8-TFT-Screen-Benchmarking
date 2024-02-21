@@ -108,7 +108,7 @@
 /* Transmit Type */
 #define DMA_MODE 1
 #define SPI_MODE 0
-#define TRANSMIT_MODE       SPI_MODE
+#define TRANSMIT_MODE       DMA_MODE
 #define BENCHMARK_ENABLE    1
 
 
@@ -185,6 +185,7 @@ void ILI9341_StartBenchmark();
 void ILI9341_EndBenchmark();
 void ILI9341_TimerCallbackFn();
 float ILI9341_Return_TimeElapsed();
+int ILI9341_Return_BenchmarkSize();
 
 void ILI9341_Draw_Rectangle(uint16_t X, uint16_t Y, uint16_t Width, uint16_t Height, uint16_t Colour);
 void ILI9341_Draw_Horizontal_Line(uint16_t X, uint16_t Y, uint16_t Width, uint16_t Colour);
