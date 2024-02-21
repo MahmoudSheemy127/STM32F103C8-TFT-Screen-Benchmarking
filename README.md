@@ -40,15 +40,11 @@ This project is aimed at benchmarking the performance of interfacing an STM32F10
 
 - **Benchmarking Execution:** Execute the benchmarking functions and compare the time efficiency between the two methods.
 
-### 7. Documentation
-
-- **README.md:** Create a comprehensive README file to guide users, developers, and contributors about the project, its purpose, setup, and results.
-
 ## Usage
 
 1. **Clone the Repository:**
     ```sh
-    git clone https://github.com/yourusername/stm32-tft-benchmark.git
+    git clone https://github.com/MahmoudSheemy127/STM32F103C8-TFT-Screen-Benchmarking.git
     ```
 
 2. **Hardware Connections:**
@@ -63,7 +59,7 @@ This project is aimed at benchmarking the performance of interfacing an STM32F10
 
 ## Results
 
-The benchmarking results demonstrate a significant reduction in time when using SPI with DMA for drawing graphics on the TFT screen. Detailed results and charts may be found in the documentation or the project's wiki.
+The benchmarking results demonstrate a significant reduction in time when using SPI with DMA for drawing graphics on the TFT screen.
 
 ## License
 
