@@ -27,14 +27,16 @@ In this project i have developed the following HAL & CMSIS peripheral drivers:
     - Ensure proper power supply and ground connections.
 
 3. **Application configurations:**
-    - To start SPI DMA benchmarking set the flag '''TRANSFER_MODE
+    - To start SPI DMA benchmarking set the flag '''TRANSFER_MODE''' to '''DMA_MODE'''
+    - To start normal SPI benchmarking set the flag '''TRANSFER_MODE''' to '''SPI_MODE'''
 
 
 3. **Build and Flash:**
     - Use your preferred STM32 development environment (e.g., STM32CubeIDE, PlatformIO) to build and flash the project to the microcontroller.
 
 4. **Run the Benchmark:**
-    - Monitor the serial output or other designated channels to view the benchmark results.
+    - Application will draw a series of graphics on the TFT screen.
+    - After drawing the graphics on the screen the final benchmark result of the SPI transfer method chosen is printed on the screen
 
 ## Results
 
