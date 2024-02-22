@@ -25,8 +25,23 @@ In this project, I have developed the following HAL & CMSIS peripheral drivers:
     - Connect the TFT screen to the specified GPIO pins on the STM32F103C8 as shown in the figure below.
     - In this project, I am using SPI2
     - Ensure proper power supply and ground connections.
+      
+| STM32F103C8 Pin | TFT ILI9341 Pin | Function                   |
+| --------------- | --------------- | -------------------------- |
+| 3V3             | LED             | Backlight Power (3.3V)     |
+| PA5             | SCK             | SPI Clock                  |
+| PA7             | SDA             | SPI MOSI (Data In)         |
+| PA2             | A0              | Data/Command Selection     |
+| PA8             | RST             | Reset                      |
+| PA3             | CS              | SPI Chip Select            |
+| GND             | GND             | Ground                     |
+| VCC             | 3V3             | Power Supply (3.3V)        |
+    
+![alt text](sketch.png)
 
-3. **Application configurations:**
+   
+
+4. **Application configurations:**
     - To start SPI DMA benchmarking set the macro flag ```TRANSFER_MODE``` to ```DMA_MODE```
     - To start normal SPI benchmarking set the macro flag ```TRANSFER_MODE``` to ```SPI_MODE```
 
